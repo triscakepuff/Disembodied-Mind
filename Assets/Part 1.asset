@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9e1afa6af0c32049b121e7cb5ffeb37, type: 3}
+  m_Name: Part 1
+  m_EditorClassIdentifier: 
+  dialogueLines:
+  - name: Me
+    dialogue: Tough day
+    characterPortrait: {fileID: 0}
+  - name: Me
+    dialogue: Unnerving village
+    characterPortrait: {fileID: 0}
+  - name: Me
+    dialogue: Spirit is breaking
+    characterPortrait: {fileID: 0}
+  - name: Me
+    dialogue: The climax of the story is dawning upon me
+    characterPortrait: {fileID: 0}
+  - name: Me
+    dialogue: she's coming for me.
+    characterPortrait: {fileID: 0}
