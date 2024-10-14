@@ -1,118 +1,103 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine.UI;
 public class DialogueManager : MonoBehaviour
 {
-    public TMP_Text speakerText;    // Reference to the speaker name UI Text
-    public TMP_Text dialogueText;   // Reference to the dialogue UI Text
+    public static DialogueManager Instance;
 
-    //public Image portraitImage; // Reference to the character portrait UI Image
-    public GameObject dialoguePanel; // Reference to the dialogue UI Panel
-    public float typingSpeed = 0.05f; // Time between each letter
-    public Animator dialogueAnimator;
-    private DialogueLine currentDialogue;
+    public TMP_Text name;
+    public TMP_Text sentence;
+
+    private Queue<DialogueLine> lines;
+    public bool isDialogueActive = false;
+    public float typingSpeed = 0.5f;
+    public Animator animator;
     private Coroutine typingCoroutine;
-    private int dialogueIndex;
-    private bool isTyping = false; // To keep track of typing state
-
+    // Start is called before the first frame update
     void Start()
     {
-        dialoguePanel.SetActive(false); // Hide the dialogue panel at the start
+        if(Instance == null)
+        {
+            Instance = this;
+        }
+        lines = new Queue<DialogueLine>();
     }
 
+    // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
-        {
-            if(isTyping)
-            {
-                SkipTyping();
-            }
-        }
+       
     }
-    public void StartDialogue(DialogueScene dialogueScene)
+    public void StartDialogue(Dialogue dialogue)
     {
-        dialoguePanel.SetActive(true); // Show the dialogue panel
-        dialogueIndex = 0;
-        DisplayDialogue(dialogueScene.dialogueLines[dialogueIndex]); 
-    }
+        isDialogueActive = true;
+        animator.SetBool("FadeIn", true);
 
-    void DisplayDialogue(DialogueLine dialogueLine)
-    {
-        
-        currentDialogue = dialogueLine;
-        speakerText.text = dialogueLine.name;
+        lines.Clear();
 
-        // Show character portrait
-        // if (dialogueLine.characterPortrait != null)
-        // {
-        //     portraitImage.sprite = dialogueLine.characterPortrait;
-        //     portraitImage.gameObject.SetActive(true);
-        // }
-        // else
-        // {
-        //     portraitImage.gameObject.SetActive(false);
-        // }
-
-        // Start typing effect
-        if (typingCoroutine != null)
+        foreach(DialogueLine dialogueLine in dialogue.dialogueLines)
         {
-            StopCoroutine(typingCoroutine);
+            lines.Enqueue(dialogueLine);
         }
-        typingCoroutine = StartCoroutine(TypeSentence(dialogueLine.dialogue));
+        DisplayNextDialogue();
     }
 
-    IEnumerator TypeSentence(string sentence)
+    public void DisplayNextDialogue()
     {
-        dialogueText.text = ""; // Clear the dialogue text
-        isTyping = true;        // Mark that we are typing
-
-        foreach (char letter in sentence.ToCharArray())
-        {
-            dialogueText.text += letter;  // Add each letter one by one
-            yield return new WaitForSeconds(typingSpeed); // Wait before next letter
-        }
-
-        isTyping = false;  // Typing finished
-        // Optionally, enable choice buttons here if needed
-    }
-
-    void StartTyping(DialogueLine dialogueLine)
-    {
-        if (typingCoroutine != null)
-        {
-            StopCoroutine(typingCoroutine);
-        }
-        currentDialogue = dialogueLine;
-        typingCoroutine = StartCoroutine(TypeSentence(dialogueLine.dialogue));
-    }
-    public void NextDialogue(DialogueScene dialogueScene)
-    {
-        if (dialogueIndex < dialogueScene.dialogueLines.Length - 1)
-        {
-            dialogueIndex++;
-            DisplayDialogue(dialogueScene.dialogueLines[dialogueIndex]);
-        }
-        else
+        if(lines.Count == 0)
         {
             EndDialogue();
+            return;
         }
+
+        DialogueLine currentLine = lines.Dequeue();
+        Debug.Log("Current Line: " + currentLine.sentences);
+        name.text = currentLine.name;
+        StopTypingCoroutine();
+        typingCoroutine = StartCoroutine(TypeSentence(currentLine));
     }
-    // Optionally allow player to skip the typing effect
-    public void SkipTyping()
+
+    private void StopTypingCoroutine()
     {
-        if (isTyping && typingCoroutine != null)
+        if (typingCoroutine != null)
         {
             StopCoroutine(typingCoroutine);
-            dialogueText.text = currentDialogue.dialogue;  // Show the full text
-            isTyping = false;
+            typingCoroutine = null;
         }
     }
 
-    public void EndDialogue()
+    IEnumerator TypeSentence(DialogueLine dialogueLine)
     {
-        dialoguePanel.SetActive(false); // Hide the dialogue panel when done
+        sentence.text = "";
+        foreach(char letter in dialogueLine.sentences.ToCharArray())
+        {
+            sentence.text += letter;
+            yield return new WaitForSeconds(typingSpeed);
+        }
     }
+
+    void EndDialogue()
+    {
+        isDialogueActive = false;
+        animator.SetBool("FadeIn", false);
+        if(NPCInteract.Instance.ShouldStartInterrogation())
+        {
+            NPCInteract.Instance.StartInterrogation();
+            NPCInteract.Instance.shouldStartInterrogation = false; // Reset flag
+        }
+    }
+
+    private void SkipDialogue()
+    {
+        // Check if typing coroutine is active
+        StopAllCoroutines(); // Stop current typing
+        if (lines.Count > 0)
+        {
+            DialogueLine currentLine = lines.Peek(); // Peek at the current line
+            sentence.text = currentLine.sentences; // Show full sentence
+            DisplayNextDialogue(); // Move to next dialogue
+        }
+    }   
 }

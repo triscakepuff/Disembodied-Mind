@@ -34,8 +34,9 @@ public class Inventory : MonoBehaviour
 
         // Create a new button for the item in the UI
         GameObject newButton = Instantiate(inventoryButtonPrefab, inventoryPanel);
-        newButton.GetComponent<InventoryButton>().Setup(newItem);
+        Button itemButton = newButton.GetComponent<Button>();
 
+        itemButton.onClick.AddListener(() => SelectItem(newItem));
         itemButtonMap[newItem] = newButton;
     }
 
@@ -57,7 +58,7 @@ public class Inventory : MonoBehaviour
     }
 
       // Method for selecting an item
-    public void SelectItem(Item item, GameObject button)
+    public void SelectItem(Item item)
     {
         if (selectedItem == item)
         {
@@ -66,8 +67,6 @@ public class Inventory : MonoBehaviour
         else
         {
             selectedItem = item;
-            selectedButton = button;
-            selectedButton.GetComponent<Image>().color = Color.black;
             description.text = item.itemDescription;  // Show the description
             Debug.Log(item.itemName);
             StartCoroutine(InstantiateDialogue());
@@ -78,7 +77,7 @@ public class Inventory : MonoBehaviour
     // Method for deselecting the current item
     public void DeselectItem()
     {
-        selectedButton.GetComponent<Image>().color = Color.white;
+       
         selectedItem = null;
         selectedButton = null;
         

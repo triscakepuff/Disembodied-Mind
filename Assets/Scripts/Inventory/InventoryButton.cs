@@ -18,12 +18,6 @@ public class InventoryButton : MonoBehaviour
         GetComponent<Image>().sprite = newItem.itemIcon;
     }
 
-    // Method to handle clicking the button
-    public void OnClick()
-    {
-        inventory.SelectItem(item, gameObject);
-    }
-
     public void DestroyButton()
     {
         Destroy(gameObject);
