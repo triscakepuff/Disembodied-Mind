@@ -9,6 +9,10 @@ public class Interrogation : MonoBehaviour
     public string Evidence;
     private Item selectedItem;
     public bool Objection;
+
+    public Dialogue dialogueDefault;
+    public Dialogue dialogueTrue;
+    public Dialogue dialogueFalse;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +22,10 @@ public class Interrogation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            interrogationPanel.SetActive(false);
+        }
     }
 
    public void InterrogationFunc()
@@ -28,10 +35,26 @@ public class Interrogation : MonoBehaviour
         Item selectedItem = inventory.GetSelectedItem();
        // TriggerDialogue(selectedItem.itemName == Evidence ? dialogueTrue : dialogueFalse);
 
-        if (selectedItem.itemName == Evidence)
+        if (inventory.IsItemSelected())
         {
-            gameObject.GetComponent<Button>().enabled = false;
-            Objection = true;
+            if(selectedItem.itemName == Evidence)
+            {
+                interrogationPanel.SetActive(false);
+                DialogueManager.Instance.StartDialogue(dialogueTrue);
+                gameObject.GetComponent<Button>().enabled = false;
+                Objection = true;
+            }
+            else
+            {
+                interrogationPanel.SetActive(false);
+                DialogueManager.Instance.StartDialogue(dialogueFalse);
+            }
+           
+        }
+        else 
+        {
+            interrogationPanel.SetActive(false);
+            DialogueManager.Instance.StartDialogue(dialogueDefault);
         }
     }
 

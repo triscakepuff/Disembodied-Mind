@@ -82,7 +82,7 @@ public class DialogueManager : MonoBehaviour
     {
         isDialogueActive = false;
         animator.SetBool("FadeIn", false);
-        if(NPCInteract.Instance.ShouldStartInterrogation())
+        if(NPCInteract.Instance.ShouldStartInterrogation() || NPCInteract.Instance.IsInInterrogation())
         {
             NPCInteract.Instance.StartInterrogation();
             NPCInteract.Instance.shouldStartInterrogation = false; // Reset flag
@@ -100,4 +100,9 @@ public class DialogueManager : MonoBehaviour
             DisplayNextDialogue(); // Move to next dialogue
         }
     }   
+
+    public bool IsDialogueActive()
+    {
+        return isDialogueActive;
+    }
 }
