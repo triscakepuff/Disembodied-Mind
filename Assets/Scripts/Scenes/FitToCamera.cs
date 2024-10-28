@@ -25,10 +25,10 @@ public class FitSpriteToCamera : MonoBehaviour
             Debug.LogError("No target camera assigned.");
             return;
         }
+        
 
         // Get the SpriteRenderer component
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-
         // Calculate the world height and width of the target camera view
         float worldHeight = targetCamera.orthographicSize * 2;
         float worldWidth = worldHeight * targetCamera.aspect;
