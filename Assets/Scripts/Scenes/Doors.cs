@@ -5,7 +5,7 @@ using UnityEngine;
 public class Doors : MonoBehaviour
 {
     public int index;
-    private void OnMouseDown()
+    public void SwitchScene()
     {
         CameraController.Instance.SwitchToCamera(index);
     }
