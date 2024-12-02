@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Doors : MonoBehaviour
 {
-    public int index;
-    public void SwitchScene()
+    private int index;
+    public void SwitchScene(int index)
     {
         CameraController.Instance.SwitchToCamera(index);
     }

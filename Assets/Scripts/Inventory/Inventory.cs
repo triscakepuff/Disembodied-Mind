@@ -13,6 +13,8 @@ public class Inventory : MonoBehaviour
     public int dialogueTime;
     public Animator dialogueAnimator;
 
+    
+    private GameObject newButton;
     private Item selectedItem = null;
     private GameObject selectedButton = null;
   
@@ -38,6 +40,7 @@ public class Inventory : MonoBehaviour
 
         itemButton.onClick.AddListener(() => SelectItem(newItem));
         itemButtonMap[newItem] = newButton;
+        itemButton.GetComponent<Image>().sprite = newItem.itemIcon;
     }
 
     // Remove an item from the inventory
@@ -82,6 +85,15 @@ public class Inventory : MonoBehaviour
         selectedButton = null;
         
         description.text = "";  // Clear the description text
+    }
+
+    public void ModifyItem(Item item, string itemName, Sprite newSprite)
+    {
+        item.itemName = itemName;
+        
+        GameObject button = itemButtonMap[item];
+        button.GetComponent<Image>().sprite = newSprite;
+        
     }
 
     // Method to check if an item is selected

@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 public class ObjectInteract : MonoBehaviour
 {   
-    public string ObjectName;
+    public string[] ObjectName;
     public string targetObject;
     public TMP_Text dialogueLine;
     public string interactLine;
     public string interactLine2;
     public int dialogueTime;
     private Animator dialogueAnimator;
-
     private SpriteRenderer spriteRenderer;
+
+    public QuestManager questManager;
     void Start()
     {
         if(dialogueLine != null)
@@ -34,15 +36,22 @@ public class ObjectInteract : MonoBehaviour
         {
             Item SelectedItem = Inventory.instance.GetSelectedItem();
 
-            if(SelectedItem.itemName == ObjectName && gameObject.name == targetObject)
+            if(questManager.quests[0].questName == "Gather items for the ritual")
             {
-                Debug.Log("I finally did something about this object!");
-                StartCoroutine(InstantiateDialogue());
-                dialogueAnimator.SetBool("FadeIn", true);
-                dialogueLine.text = interactLine2;
-                Inventory.instance.RemoveItem(SelectedItem);
-                spriteRenderer.color = Color.red;
+                if((SelectedItem.itemName == ObjectName[0] || SelectedItem.itemName == ObjectName[1]))
+                {
+                    StartCoroutine(InstantiateDialogue());
+                    dialogueAnimator.SetBool("FadeIn", true);
+                    dialogueLine.text = interactLine2;
+                    if(SelectedItem.itemName == "Empty Oil Can" || SelectedItem.itemName == "Empty Oil Can 1" )
+                    {
+                        Sprite filledOilCanSprite = GameManager.Instance.filledOilCan.sprite;
+                        questManager.CompleteTask(0);   
+                        Inventory.instance.ModifyItem(SelectedItem, "Filled Oil Can", filledOilCanSprite);  
+                    }
+                }
             }
+            
             
         }else
         {

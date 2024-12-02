@@ -30,32 +30,32 @@ public class Interrogation : MonoBehaviour
 
    public void InterrogationFunc()
     {
-        var inventory = InventoryManager.GetComponent<Inventory>();
+    //     var inventory = InventoryManager.GetComponent<Inventory>();
         
-        Item selectedItem = inventory.GetSelectedItem();
-       // TriggerDialogue(selectedItem.itemName == Evidence ? dialogueTrue : dialogueFalse);
+    //     Item selectedItem = inventory.GetSelectedItem();
+    //    // TriggerDialogue(selectedItem.itemName == Evidence ? dialogueTrue : dialogueFalse);
 
-        if (inventory.IsItemSelected())
-        {
-            if(selectedItem.itemName == Evidence)
-            {
-                interrogationPanel.SetActive(false);
-                DialogueManager.Instance.StartDialogue(dialogueTrue);
-                gameObject.GetComponent<Button>().enabled = false;
-                Objection = true;
-            }
-            else
-            {
-                interrogationPanel.SetActive(false);
-                DialogueManager.Instance.StartDialogue(dialogueFalse);
-            }
+    //     if (inventory.IsItemSelected())
+    //     {
+    //         if(selectedItem.itemName == Evidence)
+    //         {
+    //             interrogationPanel.SetActive(false);
+    //             DialogueManager.Instance.StartDialogue(dialogueTrue);
+    //             gameObject.GetComponent<Button>().enabled = false;
+    //             Objection = true;
+    //         }
+    //         else
+    //         {
+    //             interrogationPanel.SetActive(false);
+    //             DialogueManager.Instance.StartDialogue(dialogueFalse);
+    //         }
            
-        }
-        else 
-        {
-            interrogationPanel.SetActive(false);
-            DialogueManager.Instance.StartDialogue(dialogueDefault);
-        }
+    //     }
+    //     else 
+    //     {
+    //         interrogationPanel.SetActive(false);
+    //         DialogueManager.Instance.StartDialogue(dialogueDefault);
+    //     }
     }
 
 

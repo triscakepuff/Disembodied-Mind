@@ -2,107 +2,87 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
+
 public class DialogueManager : MonoBehaviour
 {
-    public static DialogueManager Instance;
+    public TextMeshProUGUI nameText; // UI for the speaker's name
+    public TextMeshProUGUI dialogueText; // UI for the dialogue text
+    public GameObject dialogueBox; // Dialogue UI box
+    private Queue<DialogueLine> dialogueQueue; // Queue for dialogue lines
+    public string currSentence;
+    private Animator dialogueAnim;
+    public bool inDialogue = false;
 
-    public TMP_Text name;
-    public TMP_Text sentence;
-
-    private Queue<DialogueLine> lines;
-    public bool isDialogueActive = false;
-    public float typingSpeed = 0.5f;
-    public Animator animator;
-    private Coroutine typingCoroutine;
-    // Start is called before the first frame update
     void Start()
     {
-        if(Instance == null)
-        {
-            Instance = this;
-        }
-        lines = new Queue<DialogueLine>();
+        dialogueQueue = new Queue<DialogueLine>();
+        dialogueAnim = dialogueBox.GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-       
-    }
     public void StartDialogue(Dialogue dialogue)
     {
-        isDialogueActive = true;
-        animator.SetBool("FadeIn", true);
+        inDialogue = true;
+        dialogueAnim.SetBool("FadeIn", true);
 
-        lines.Clear();
-
-        foreach(DialogueLine dialogueLine in dialogue.dialogueLines)
+        dialogueQueue.Clear();
+        foreach (DialogueLine line in dialogue.dialogueLines)
         {
-            lines.Enqueue(dialogueLine);
+            dialogueQueue.Enqueue(line);
         }
-        DisplayNextDialogue();
+
+        DisplayNextLine();
     }
 
-    public void DisplayNextDialogue()
+    public void DisplayNextLine()
     {
-        if(lines.Count == 0)
+        if (dialogueQueue.Count == 0)
         {
             EndDialogue();
             return;
         }
 
-        DialogueLine currentLine = lines.Dequeue();
-        Debug.Log("Current Line: " + currentLine.sentences);
-        name.text = currentLine.name;
-        StopTypingCoroutine();
-        typingCoroutine = StartCoroutine(TypeSentence(currentLine));
+        DialogueLine currentLine = dialogueQueue.Dequeue();
+        currSentence = currentLine.sentences;
+
+        StopAllCoroutines();
+        StartCoroutine(TypeSentence(currentLine.name, currentLine.sentences));
     }
 
-    private void StopTypingCoroutine()
+    IEnumerator TypeSentence(string speakerName, string sentence)
     {
-        if (typingCoroutine != null)
+        nameText.text = speakerName;
+        dialogueText.text = "";
+
+        foreach (char letter in sentence.ToCharArray())
         {
-            StopCoroutine(typingCoroutine);
-            typingCoroutine = null;
+            dialogueText.text += letter;
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
-    IEnumerator TypeSentence(DialogueLine dialogueLine)
+    public void CompleteSentence()
     {
-        sentence.text = "";
-        foreach(char letter in dialogueLine.sentences.ToCharArray())
+        if (dialogueText.text != currSentence)
         {
-            sentence.text += letter;
-            yield return new WaitForSeconds(typingSpeed);
+            StopAllCoroutines(); // Stop the typing coroutine.
+            dialogueText.text = currSentence;
+        }
+        else
+        {
+            
+            DisplayNextLine();
         }
     }
 
     void EndDialogue()
     {
-        isDialogueActive = false;
-        animator.SetBool("FadeIn", false);
-        if(NPCInteract.Instance.ShouldStartInterrogation() || NPCInteract.Instance.IsInInterrogation())
-        {
-            NPCInteract.Instance.StartInterrogation();
-            NPCInteract.Instance.shouldStartInterrogation = false; // Reset flag
-        }
+        inDialogue = false;
+        dialogueAnim.SetBool("FadeIn", false);
+        Debug.Log("Dialogue ended.");
     }
 
-    private void SkipDialogue()
+    public bool InDialogue()
     {
-        // Check if typing coroutine is active
-        StopAllCoroutines(); // Stop current typing
-        if (lines.Count > 0)
-        {
-            DialogueLine currentLine = lines.Peek(); // Peek at the current line
-            sentence.text = currentLine.sentences; // Show full sentence
-            DisplayNextDialogue(); // Move to next dialogue
-        }
-    }   
-
-    public bool IsDialogueActive()
-    {
-        return isDialogueActive;
+        return inDialogue;
     }
 }
