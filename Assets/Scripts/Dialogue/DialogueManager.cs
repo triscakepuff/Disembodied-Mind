@@ -13,12 +13,21 @@ public class DialogueManager : MonoBehaviour
     private Animator dialogueAnim;
     public bool inDialogue = false;
 
+    public static DialogueManager instance;
+
     void Start()
     {
         dialogueQueue = new Queue<DialogueLine>();
         dialogueAnim = dialogueBox.GetComponent<Animator>();
     }
 
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+        {
+            CompleteSentence();
+        }
+    }
     public void StartDialogue(Dialogue dialogue)
     {
         inDialogue = true;

@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public GameObject inventoryUI;
 
     [Header("Dialogue")]
-    [SerializeField] private bool startDialogue = false; // Private variable
+    public bool startDialogue = false; // Private variable
     public bool StartDialogue // Public getter
     {
         get { return startDialogue; }
@@ -25,12 +25,14 @@ public class GameManager : MonoBehaviour
     public GameObject dialogueTrigger1;
     private int currentIndex = 0;
     public GameObject directions;
+    public GameObject dialogueObject;
 
     [Header("Items")]
     public Item oilCan;
     public Item oilCan1;
-    public Image filledOilCan;
+    public Item filledOilCan;
     private bool oilCanTaken = false;
+    private bool matchesTaken = false;
     public Item Matches;
 
     [Header("Managers")]
@@ -57,6 +59,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         startingDialogues[0].SetActive(true);
+        startDialogue = true;
         dialogueManager.inDialogue = true; // Set to true when starting dialogue
         navigationManager = FindObjectOfType<NavigationManager>(); // Find the NavigationManager
     }
@@ -64,28 +67,25 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(dialogueManager.inDialogue);
+        
         //Starting Dialogue at the beginning of the game
-        CheckStartDialogue();
-        if (!startDialogue)
+
+        if (startDialogue == false)
         {
             dialogueTrigger1.SetActive(true);
-            if(FindAnyObjectByType<DialogueManager>().InDialogue())
-            {
-                questCounter.SetActive(true);
-                inventoryUI.SetActive(true);
-                directions.SetActive(true);
-            } 
-        }
-        else
-        {
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
-            {
-                ActivateNextText();
-            }
+            questCounter.SetActive(true);
+            inventoryUI.SetActive(true);
+            directions.SetActive(true);
         }
 
+        
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+        {
+            ActivateNextText();
+        }
         //Once we enter Ananda's zone
-        if(navigationManager.cameras[3].gameObject.activeInHierarchy)
+        if (navigationManager.cameras[3].gameObject.activeInHierarchy)
         {
             if(!dialogueAnandaBool)
             {   
@@ -112,10 +112,22 @@ public class GameManager : MonoBehaviour
             {
                 inventoryManager.AddItem(oilCan);
                 inventoryManager.AddItem(oilCan1);
+                
                 oilCanTaken = true;
             }
             
         }
+        if (dialogueManager.currSentence == "Here are the matches I promised you earlier!")
+        {
+            if (!matchesTaken)
+            {
+                inventoryManager.AddItem(Matches);
+                matchesTaken = true;
+            }
+           
+            
+        }
+
         //Trigger Dialogue
         // if(!questManager.IsQuestActive("Meet the Neighbours"))
         // {
@@ -140,7 +152,7 @@ public class GameManager : MonoBehaviour
             {
                 Animator anim = dialogue.GetComponent<Animator>();
                 anim.SetTrigger("FadeOut");
-                Destroy(dialogue, 1f);
+                StartCoroutine(DialogueFadeOut(dialogue, 1f));
             }
 
             // Notify NavigationManager that dialogue has ended
@@ -151,20 +163,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void CheckStartDialogue()
+    private IEnumerator DialogueFadeOut(GameObject target, float delay)
     {
-        if(startingDialogues[0] != null)
-        {
-            if(startingDialogues[0].activeInHierarchy)
-            {
-                dialogueManager.inDialogue = true;
-            }else
-            {
-                dialogueManager.inDialogue = false;
-            }
-        }
-        
+        yield return new WaitForSeconds(delay);
+        target.SetActive(false);
     }
+
+   
 
     public bool IsDialogueActive() // Method to check if dialogue is active
     {

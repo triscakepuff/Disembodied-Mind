@@ -22,7 +22,7 @@ public class QuestManager : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(quests[0].questName);
+        //Debug.Log(quests[0].questName);
     }
 
     public void AddQuest(Quest newQuest)
@@ -145,6 +145,17 @@ void Quest()
     );
 
     AddQuest(quest2Part2);
+
+    Quest quest2Part3 = new Quest
+    (
+        "Go back to your house",
+        new List<Task>
+        {
+            new Task("Go home")
+        }
+    );
+
+    AddQuest(quest2Part3);
 }
 
 }

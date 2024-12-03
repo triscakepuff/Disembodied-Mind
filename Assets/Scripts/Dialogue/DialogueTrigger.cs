@@ -5,6 +5,7 @@ using UnityEngine;
 public class DialogueTrigger : MonoBehaviour
 {
     public NavigationManager navigationManager;
+    public DialogueManager dialogueManager;
     [SerializeField] private GameObject dialogueBox;
     public Dialogue dialogue;
     private bool inDialogue;
@@ -12,6 +13,7 @@ public class DialogueTrigger : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         TriggerDialogue();
         
     }

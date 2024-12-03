@@ -45,9 +45,9 @@ public class ObjectInteract : MonoBehaviour
                     dialogueLine.text = interactLine2;
                     if(SelectedItem.itemName == "Empty Oil Can" || SelectedItem.itemName == "Empty Oil Can 1" )
                     {
-                        Sprite filledOilCanSprite = GameManager.Instance.filledOilCan.sprite;
+                        Inventory.instance.RemoveItem(SelectedItem);
+                        Inventory.instance.AddItem(GameManager.Instance.filledOilCan);
                         questManager.CompleteTask(0);   
-                        Inventory.instance.ModifyItem(SelectedItem, "Filled Oil Can", filledOilCanSprite);  
                     }
                 }
             }

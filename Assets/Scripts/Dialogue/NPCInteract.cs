@@ -89,16 +89,11 @@
 
                     if((SelectedItem.itemName == "Filled Oil Can" || SelectedItem.itemName == "Filled Oil Can 1") )
                     {
+                    Debug.Log("QUEST COMPLETED");
                         inventoryManager.RemoveItem(SelectedItem);
                         FindAnyObjectByType<DialogueManager>().StartDialogue(dialogueQuest);
-                        questManager.CompleteTask(0); 
-                        if(dialogueManager.currSentence == "Here are the matches I promised you earlier!")
-                        {
-                            inventoryManager.AddItem(GameManager.Instance.Matches);
-                            dialogueRepeat.dialogueLines[0].sentences = "Good luck with your investigation!";    
-                        }
-                       
-                    }
+                        questManager.CompleteTask(1);
+                        dialogueRepeat.dialogueLines[0].sentences = "Good luck with your investigation!";                    }
                     
                 }
             }

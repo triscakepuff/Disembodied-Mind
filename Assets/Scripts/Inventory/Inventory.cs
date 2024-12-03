@@ -87,14 +87,6 @@ public class Inventory : MonoBehaviour
         description.text = "";  // Clear the description text
     }
 
-    public void ModifyItem(Item item, string itemName, Sprite newSprite)
-    {
-        item.itemName = itemName;
-        
-        GameObject button = itemButtonMap[item];
-        button.GetComponent<Image>().sprite = newSprite;
-        
-    }
 
     // Method to check if an item is selected
     public bool IsItemSelected()
