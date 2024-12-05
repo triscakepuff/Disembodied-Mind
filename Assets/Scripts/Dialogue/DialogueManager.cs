@@ -23,10 +23,14 @@ public class DialogueManager : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+        if(!GameManager.Instance.startDialogue)
         {
-            CompleteSentence();
+            if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+            {
+                CompleteSentence();
+            }
         }
+        
     }
     public void StartDialogue(Dialogue dialogue)
     {

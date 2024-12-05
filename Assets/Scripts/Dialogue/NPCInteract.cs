@@ -4,6 +4,9 @@
 
     public class NPCInteract : MonoBehaviour
     {
+        private bool hasTakenOil = false;
+        private bool anandaGivenQuest = false;
+        private bool isDay1 = true;
         [Header("Managers")]
         public QuestManager questManager;
         public DialogueManager dialogueManager;
@@ -13,6 +16,7 @@
         public Dialogue dialogueDefault;
         public Dialogue dialogueRepeat;
         public Dialogue dialogueQuest;
+        public Dialogue dialogueDay4;
         private bool hasTalked = false;
         public string Evidence;
 
@@ -42,6 +46,10 @@
             //   hasEndedInterrogation = true;
             //   EndInterrogation();
             // }
+            if(GameManager.Instance.currentDay != 1 && isDay1)
+            {
+                ResetTalk();
+            }
             if(hasTalked)
             {
                 if(gameObject.name == "Agus")
@@ -61,9 +69,12 @@
                     {
                         questManager.CompleteTask(0);   
                     }
+
                        
                 }
             }
+
+            
         }
         private void OnMouseDown()
         {
@@ -77,8 +88,25 @@
                 
             }else
             {
-                FindAnyObjectByType<DialogueManager>().StartDialogue(dialogueDefault);
-                hasTalked = true;
+                if(GameManager.Instance.currentDay == 4)
+                {
+                    if(gameObject.name == "Warung Owner")
+                    {
+                        dialogueRepeat.dialogueLines[0].sentences = "Once again, good luck with your investigation!";
+                    }else if(gameObject.name == "Agus")
+                    {
+                        dialogueRepeat.dialogueLines[0].sentences = "I need to hurry";
+                    }
+                     
+                    FindAnyObjectByType<DialogueManager>().StartDialogue(dialogueDay4);
+                    hasTalked = true;
+
+                }else if(GameManager.Instance.currentDay == 1)
+                {
+                    FindAnyObjectByType<DialogueManager>().StartDialogue(dialogueDefault);
+                    hasTalked = true;
+                }
+               
 
             }
             if(gameObject.name == "Warung Owner")
@@ -87,17 +115,72 @@
                 {
                     Item SelectedItem = Inventory.instance.GetSelectedItem();
 
-                    if((SelectedItem.itemName == "Filled Oil Can" || SelectedItem.itemName == "Filled Oil Can 1") )
+                    if(SelectedItem.itemName == "Filled Oil Can" && !hasTakenOil)
                     {
-                    Debug.Log("QUEST COMPLETED");
-                        inventoryManager.RemoveItem(SelectedItem);
+                        Inventory.instance.DeselectItem();
+                        Debug.Log("QUEST COMPLETED");
+                        inventoryManager.RemoveItem(SelectedItem, 1);
                         FindAnyObjectByType<DialogueManager>().StartDialogue(dialogueQuest);
                         questManager.CompleteTask(1);
                         dialogueRepeat.dialogueLines[0].sentences = "Good luck with your investigation!";                    }
+                        hasTakenOil = true;
                     
                 }
             }
+            else if(gameObject.name == "Ananda")
+            {
+                Item SelectedItem = Inventory.instance.GetSelectedItem();
+                if(questManager.quests[0].questName == "Explore the village")
+                {
+                    questManager.CompleteTask(0);   
+                }
+                if(!anandaGivenQuest)
+                {
+                    Quest quest3part2 = new Quest
+                    (
+                        "Comfort Ananda with flowers",
+                        new List<Task>
+                        {
+                            new Task("Collect 10 flowers for a bouquet"),
+                            new Task("Give the bouquet to Ananda")
+                        }
+                    );
+                    questManager.AddQuest(quest3part2);
+                   anandaGivenQuest = true;
+                }
+                
+                if(Inventory.instance.IsItemSelected())
+                {
+                    if(selectedItem.itemName == "Bouquet")
+                    {
+                        Inventory.instance.DeselectItem();
+                        inventoryManager.RemoveItem(SelectedItem, 1);
+                        FindAnyObjectByType<DialogueManager>().StartDialogue(dialogueQuest);
+                        questManager.CompleteTask(1);
+                        dialogueRepeat.dialogueLines[0].sentences = "Thank you, once again.";
+                        dialogueRepeat.dialogueLines[0].name = "Ananda";   
+
+                        Quest quest2part3 = new Quest
+                        (
+                            "Visit Ananda’s daughter’s grave",
+                            new List<Task>
+                            {
+                                new Task("Take the wooden stake from her grave")
+                            }
+                        );
+
+                    
+                    questManager.AddQuest(quest2part3);
+                    }
+                }
+            }
             
+        }
+
+        public void ResetTalk()
+        {
+            hasTalked = false;
+            isDay1 = false;
         }
     
         // public void StartInterrogation()

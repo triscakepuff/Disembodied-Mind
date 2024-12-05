@@ -25,7 +25,7 @@ public class NavigationManager : MonoBehaviour
     void UpdateNavigationUI()
     {
         // Check if startingDialogue is true
-        if (dialogueManager.inDialogue)
+        if (dialogueManager.inDialogue || GameManager.Instance.inTransition || GameManager.Instance.startDialogue)
         {
             // Disable all navigation UI elements if startingDialogue is true
             foreach (var ui in navigationUI)
@@ -33,20 +33,23 @@ public class NavigationManager : MonoBehaviour
                 ui.SetActive(false);
             }
             return; // Exit the method early
+        }else
+        {
+             // Enable/disable navigation UI based on camera visibility
+            for (int i = 0; i < cameras.Length; i++)
+            {
+                if (cameras[i].gameObject.activeInHierarchy)
+                {
+                    navigationUI[i].SetActive(true);
+                }
+                else
+                {
+                    navigationUI[i].SetActive(false);
+                }
+            }
         }
 
-        // Enable/disable navigation UI based on camera visibility
-        for (int i = 0; i < cameras.Length; i++)
-        {
-            if (cameras[i].gameObject.activeInHierarchy)
-            {
-                navigationUI[i].SetActive(true);
-            }
-            else
-            {
-                navigationUI[i].SetActive(false);
-            }
-        }
+       
     }
 
     public void OnDialogueEnd()

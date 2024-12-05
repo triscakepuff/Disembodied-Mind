@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c0bb21ea354d354abc61fc36aa62221, type: 3}
   m_Name: Filled Oil Can
   m_EditorClassIdentifier: 
-  itemName: 
-  itemIcon: {fileID: 0}
+  itemName: Filled Oil Can
+  itemIcon: {fileID: -3923969072530727053, guid: 22fbe6825232bcd40aa6cfb8b178d757, type: 3}
   itemDescription: 
+  count: 1
