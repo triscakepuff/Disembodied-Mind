@@ -5,7 +5,7 @@
     public class NPCInteract : MonoBehaviour
     {
         private bool hasTakenOil = false;
-        private bool anandaGivenQuest = false;
+     
         private bool isDay1 = true;
         [Header("Managers")]
         public QuestManager questManager;
@@ -29,9 +29,10 @@
         // public GameObject obj3;
         private bool hasEndedInterrogation = false;
         private bool isInInterrogation = false;
+        private Collider2D collider;
         private void Awake()
         {
-        
+            collider = GetComponent<Collider2D>();
         }
 
         void Update()
@@ -55,7 +56,7 @@
                 if(gameObject.name == "Agus")
                 {
                     if(questManager.quests[0].questName == "Meet the Neighbours")
-                        questManager.CompleteTask(1);
+                        questManager.CompleteTask(2);
                 }
                 else if(gameObject.name == "Chief")
                 {
@@ -73,6 +74,16 @@
                        
                 }
             }
+        if (dialogueManager.inDialogue)
+        {
+            collider.enabled = false;
+        }
+        else
+        {
+            collider.enabled = true;
+        }
+
+
 
             
         }
@@ -130,24 +141,7 @@
             else if(gameObject.name == "Ananda")
             {
                 Item SelectedItem = Inventory.instance.GetSelectedItem();
-                if(questManager.quests[0].questName == "Explore the village")
-                {
-                    questManager.CompleteTask(0);   
-                }
-                if(!anandaGivenQuest)
-                {
-                    Quest quest3part2 = new Quest
-                    (
-                        "Comfort Ananda with flowers",
-                        new List<Task>
-                        {
-                            new Task("Collect 10 flowers for a bouquet"),
-                            new Task("Give the bouquet to Ananda")
-                        }
-                    );
-                    questManager.AddQuest(quest3part2);
-                   anandaGivenQuest = true;
-                }
+                
                 
                 if(Inventory.instance.IsItemSelected())
                 {

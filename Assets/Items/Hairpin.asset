@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Hairpin
   m_EditorClassIdentifier: 
   itemName: Hairpin
-  itemIcon: {fileID: 7717166845595404724, guid: 7f2dad59cbe53114d81f430c751b63ef, type: 3}
+  itemIcon: {fileID: -6248963375964835343, guid: 0b59e835ce472c5428ab5f44aecb1976, type: 3}
   itemDescription: 
-  count: 1
+  count: 0

@@ -6,6 +6,7 @@ public class NavigationManager : MonoBehaviour
 {
     public Camera[] cameras;
     public GameObject[] navigationUI;
+    public GameObject dialogueScreen;
 
     [Header("Managers")]
     public static NavigationManager Instance;
@@ -41,6 +42,8 @@ public class NavigationManager : MonoBehaviour
                 if (cameras[i].gameObject.activeInHierarchy)
                 {
                     navigationUI[i].SetActive(true);
+                    dialogueScreen.transform.position = cameras[i].transform.position;
+                    dialogueScreen.transform.rotation = cameras[i].transform.rotation;
                 }
                 else
                 {

@@ -11,11 +11,15 @@ public class GameManager : MonoBehaviour
     public GameObject screenPanel;
     public GameObject Day1Text;
     public GameObject Day4Text;
+    public GameObject Day5Text;
     public bool inTransition = false;
+    public float waitTime = 4f;
 
     [Header("Dialogue")]
+    public GameObject dialoguePanel;
     public bool startDialogue = false;
     public bool day4StartDialogue = false;
+    public bool endDialogueBool = false;
     public bool StartDialogue // Public getter
     {
         get { return startDialogue; }
@@ -25,11 +29,20 @@ public class GameManager : MonoBehaviour
     private bool dialogueAnandaBool;
     public Dialogue dialogueAnandaDay4;
     private bool dialogueAnandaDay4Bool;
+    private bool anandaGivenQuest = false;
 
     public Dialogue dialogueChief;
     private bool dialogueChiefBool;
     public Dialogue dialogueChiefDay4;
     private bool dialogueChiefDay4Bool;
+
+    public Dialogue dialogueNoShovel;
+
+    public Dialogue dialogueShovel;
+
+    public Dialogue dialogueKuyangHair;
+
+    public Dialogue endDialogue;
 
     public Dialogue quest2Start;
     public List<GameObject> startingDialogues;
@@ -42,6 +55,11 @@ public class GameManager : MonoBehaviour
     public string[] day4StartDialogues;
 
     [Header("Items")]
+    private bool notActivated = true;
+    public GameObject flowersContainer;
+    public GameObject kuyangHair;
+    public GameObject shovelObject;
+    public GameObject tornClothObject;
     public Item oilCan;
     public Item oilCan1;
     public Item filledOilCan;
@@ -50,10 +68,16 @@ public class GameManager : MonoBehaviour
     public Item hairpin;
     public Item bouquet;
     public Item woodenStakes;
+    public Item shovel;
+    public Item tornCloth;
     private bool oilCanTaken = false;
     private bool matchesTaken = false;
     private bool hairpinTaken = false;
+    private bool shovelTaken = false;
     private bool hasBouquet = false;
+    public bool kuyangHairTaken = false;
+    private bool kuyangHairGone = false;
+    private bool tornClothTaken = false;
 
     [Header("NPCs")]
     public GameObject Ananda;
@@ -90,6 +114,8 @@ public class GameManager : MonoBehaviour
         bouquet.count = 1;
         hairpin.count = 1;
         woodenStakes.count = 1;
+        shovel.count = 1;
+        tornCloth.count = 1;
         if (questManager == null)
         {
             // Automatically find QuestManager if not assigned in the Inspector
@@ -104,16 +130,21 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(startDialogue);
         
         //Starting Dialogue at the beginning of the game
 
-        if(!startDialogue)
+        if(!startDialogue && !dialogueManager.inDialogue)
         {
             dialogueTrigger1.SetActive(true);
             questCounter.SetActive(true);
             inventoryUI.SetActive(true);
             directions.SetActive(true);
+            dialoguePanel.SetActive(false);
+        }
+        else
+        {
+            dialoguePanel.SetActive(true);
+            questCounter.SetActive(false);
         }
 
         
@@ -127,13 +158,31 @@ public class GameManager : MonoBehaviour
             if(!dialogueAnandaBool)
             {   
                 dialogueManager.StartDialogue(dialogueAnanda);
-                questManager.CompleteTask(2);
+                questManager.CompleteTask(1);
                 dialogueAnandaBool = true;
             }
             
             if(!dialogueAnandaDay4Bool && currentDay == 4)
             {
                 dialogueManager.StartDialogue(dialogueAnandaDay4);
+                if (questManager.quests[0].questName == "Explore the village")
+                {
+                    questManager.CompleteTask(0);
+                }
+                if (!anandaGivenQuest)
+                {
+                    Quest quest3part2 = new Quest
+                    (
+                        "Comfort Ananda with flowers",
+                        new List<Task>
+                        {
+                            new Task("Collect 10 flowers for a bouquet"),
+                            new Task("Give the bouquet to Ananda")
+                        }
+                    );
+                    questManager.AddQuest(quest3part2);
+                    anandaGivenQuest = true;
+                }
                 dialogueAnandaDay4Bool = true;
             }
 
@@ -196,8 +245,17 @@ public class GameManager : MonoBehaviour
             {
                 dialogueTrigger2.SetActive(true);
             }
+
             Ananda.SetActive(true);
             Chief.SetActive(false);
+            if (notActivated)
+            {
+                shovelObject.SetActive(true);
+                flowersContainer.SetActive(true);
+                notActivated = false;
+            }
+            
+
             if(flowers.count == 10)
             {
                 inventoryManager.RemoveItem(flowers, 10);
@@ -222,25 +280,51 @@ public class GameManager : MonoBehaviour
                 
             }
 
-            if(questManager.quests[0].questName == "Go back to your house.")
+            if(questManager.quests[0].questName == "Investigate traces of the mess from the grave.")
             {
-                if(!Inventory.instance.HasItem("Shovel"))
-                {
-                    //StartCoroutine(DayTransition());
-                    Quest quest3Part5 = new Quest
-                    (
-                        "Investigate traces of the mess from the grave.",
-                        new List<Task>
-                        {
-                            new Task("Find the evidence that created this mess.")
-                        }
-                    );
-
-                    questManager.AddQuest(quest3Part5); 
-                
-                }
-                    
+    
+                Quest quest3Part4 = new Quest
+                (
+                    "Go back to your house.",
+                    new List<Task>
+                    {
+                        new Task("Go home.")
+                    }
+                );
+                questManager.AddQuest(quest3Part4);
             }
+            
+
+            //Activate kuyang Hair if player has shovel
+            if (Inventory.instance.HasItem("Shovel"))
+            {
+                if(questManager.quests[0].questName == "Go back to your house.")
+                {
+                    if (kuyangHair != null)
+                        kuyangHair.SetActive(true);
+
+                    if (tornClothObject != null)
+                        tornClothObject.SetActive(true);
+
+                }
+
+                if (questManager.quests[0].questName == "Investigate traces of the mess from the grave.")
+                questManager.CompleteTask(0);
+            }
+
+            if (dialogueManager.currSentence == "This is no longer just a hunt. It’s survival.")
+            {
+                StartCoroutine(DayTransition());
+            }
+
+        }
+        
+        //Check if shovel is taken or not
+        if (Inventory.instance.HasItem("Shovel") && !shovelTaken)
+        {
+            dialogueManager.StartDialogue(dialogueShovel);
+            
+            shovelTaken = true;
         }
 
     }
@@ -302,16 +386,20 @@ public class GameManager : MonoBehaviour
                 "Explore the village",
                 new List<Task>
                 {
-                    new Task("Explore the village for clues")
+                    new Task("Explore the village for clues")   
                 }
             );
             questManager.AddQuest(quest3part1);
         }else if(currentDay == 4)
         {
-            //Day5Text.SetActive(true);
-            currentDay = 5;
+            Day5Text.SetActive(true);
+            currentDay = 5; 
         }
-        yield return new WaitForSeconds(4f);
+        if(currentDay == 5)
+        {
+            waitTime = 10f;
+        }
+        yield return new WaitForSeconds(waitTime);
         Day4Text.SetActive(false);
         anim.SetBool("FadeIn", false);
         inTransition = false;
@@ -324,13 +412,13 @@ public class GameManager : MonoBehaviour
         inventoryUI.SetActive(false);
         directions.SetActive(false);
         startDialogue = true;
-
+            
         // Ensure the texts align with the dialogues
         for (int i = 0; i < startingDialogues.Count && i < day4StartDialogues.Length; i++)
         {
             startingDialogues[i].GetComponent<TextMeshProUGUI>().text = day4StartDialogues[i];
             startingDialogues[i].SetActive(false); // Make sure they're inactive initially
-        }
+        }   
 
         // Activate the first dialogue to start
         currentIndex = 0;

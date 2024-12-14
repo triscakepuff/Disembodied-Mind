@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Wooden Stakes
   m_EditorClassIdentifier: 
   itemName: Wooden Stakes
-  itemIcon: {fileID: 9057085096128222566, guid: 11309dee4c4028d43aad1e63c4d09bb2, type: 3}
+  itemIcon: {fileID: 7717166845595404724, guid: 7f2dad59cbe53114d81f430c751b63ef, type: 3}
   itemDescription: 
   count: 1
