@@ -30,6 +30,11 @@ public class DialogueManager : MonoBehaviour
                 CompleteSentence();
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            SkipDialogue();
+        }
         
     }
     public void StartDialogue(Dialogue dialogue)
@@ -92,6 +97,14 @@ public class DialogueManager : MonoBehaviour
         inDialogue = false;
         dialogueAnim.SetBool("FadeIn", false);
         Debug.Log("Dialogue ended.");
+    }
+
+    public void SkipDialogue()
+    {
+        // End the current dialogue immediately
+        StopAllCoroutines();
+        dialogueQueue.Clear(); // Clear the dialogue queue
+        EndDialogue(); // End the dialogue sequence
     }
 
     public bool InDialogue()

@@ -18,8 +18,9 @@ public class GameManager : MonoBehaviour
     [Header("Dialogue")]
     public GameObject dialoguePanel;
     public bool startDialogue = false;
+    public bool day1StartDialogue = false;
     public bool day4StartDialogue = false;
-    public bool endDialogueBool = false;
+    public bool endDialogueBoolDay4 = false;
     public bool StartDialogue // Public getter
     {
         get { return startDialogue; }
@@ -44,15 +45,22 @@ public class GameManager : MonoBehaviour
 
     public Dialogue endDialogue;
 
+
     public Dialogue quest2Start;
-    public List<GameObject> startingDialogues;
+    public GameObject[] startingDialogues;
     public GameObject dialogueTrigger1;
     public GameObject dialogueTrigger2;
     private int currentIndex = 0;
     public GameObject directions;
     public GameObject dialogueObject;
 
+    [Header("Start Dialogues")]
+    public string[] day1StartDialogues;
     public string[] day4StartDialogues;
+
+    public GameObject startDialoguePrefab;
+    public Transform startDialogueTransform;
+
 
     [Header("Items")]
     private bool notActivated = true;
@@ -85,7 +93,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Managers")]
     public static GameManager Instance; // Singleton instance
-    private NavigationManager navigationManager; // Reference to NavigationManager
+    public NavigationManager navigationManager; 
     public DialogueManager dialogueManager;
     public QuestManager questManager;
     public Inventory inventoryManager;
@@ -106,23 +114,15 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Set each item count to 1
-        oilCan.count = 1;
-        oilCan1.count = 1;
-        filledOilCan.count = 1;
-        flowers.count = 1;
-        bouquet.count = 1;
-        hairpin.count = 1;
-        woodenStakes.count = 1;
-        shovel.count = 1;
-        tornCloth.count = 1;
+        InitializeItemCount();
+        
         if (questManager == null)
         {
             // Automatically find QuestManager if not assigned in the Inspector
             questManager = FindObjectOfType<QuestManager>();
         }
         currentDay = 1;
-        startingDialogues[0].SetActive(true);
+        DayStartDialogue();
         startDialogue = true;
         navigationManager = FindObjectOfType<NavigationManager>(); // Find the NavigationManager
     }
@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviour
         }
 
         
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && !inTransition)
         {
             ActivateNextText();
         }
@@ -237,7 +237,7 @@ public class GameManager : MonoBehaviour
         {
             if(!day4StartDialogue)
             {
-                Day4Dialogue();
+                DayStartDialogue();
                 day4StartDialogue = true;
             }
             
@@ -280,6 +280,12 @@ public class GameManager : MonoBehaviour
                 
             }
 
+             if (dialogueManager.currSentence == "This is no longer just a hunt. It’s survival.")
+            {
+                Debug.Log("FUNCTION CALL");
+            
+            }
+
             if(questManager.quests[0].questName == "Investigate traces of the mess from the grave.")
             {
     
@@ -312,12 +318,17 @@ public class GameManager : MonoBehaviour
                 questManager.CompleteTask(0);
             }
 
-            if (dialogueManager.currSentence == "This is no longer just a hunt. It’s survival.")
-            {
-                StartCoroutine(DayTransition());
-            }
+           
 
         }
+        //else if(currentDay == 1)
+        // {
+        //      if(!day1StartDialogue)
+        //     {
+        //         DayStartDialogue();
+        //         day1StartDialogue = true;
+        //     }
+        // }
         
         //Check if shovel is taken or not
         if (Inventory.instance.HasItem("Shovel") && !shovelTaken)
@@ -327,13 +338,17 @@ public class GameManager : MonoBehaviour
             shovelTaken = true;
         }
 
+       
+
     }
 
     private void ActivateNextText()
     {
+        Debug.Log("Current Index: " + currentIndex);
         // Check if there are still text objects to activate
-        if (currentIndex < startingDialogues.Count)
+        if (currentIndex < startingDialogues.Length)
         {
+            
             // Activate the current text object
             startingDialogues[currentIndex].SetActive(true);
             // Move to the next index
@@ -405,26 +420,61 @@ public class GameManager : MonoBehaviour
         inTransition = false;
    }
 
-   public void Day4Dialogue()
+   public void DayStartDialogue()
    {
-        Debug.Log("DAY 4 CALLED");
         questCounter.SetActive(false);
         inventoryUI.SetActive(false);
         directions.SetActive(false);
         startDialogue = true;
-            
-        // Ensure the texts align with the dialogues
-        for (int i = 0; i < startingDialogues.Count && i < day4StartDialogues.Length; i++)
+        
+        if(currentDay == 1)
         {
-            startingDialogues[i].GetComponent<TextMeshProUGUI>().text = day4StartDialogues[i];
-            startingDialogues[i].SetActive(false); // Make sure they're inactive initially
-        }   
+            startingDialogues = new GameObject[day1StartDialogues.Length];
+            for(int i = 0; i < startingDialogues.Length; i++)
+            {
+                var textComponent = startDialoguePrefab.GetComponent<TMPro.TextMeshProUGUI>();
+                textComponent.text = day1StartDialogues[i];
+                GameObject newStartDialogue = Instantiate(startDialoguePrefab, startDialogueTransform);
+            
+                startingDialogues[i] = newStartDialogue;
 
+                startingDialogues[i].SetActive(false);
+            }
+        }else if(currentDay == 4)
+        {
+            startingDialogues = new GameObject[day4StartDialogues.Length];
+              for(int i = 0; i < startingDialogues.Length; i++)
+            {
+                var textComponent = startDialoguePrefab.GetComponent<TMPro.TextMeshProUGUI>();
+                textComponent.text = day4StartDialogues[i];
+                GameObject newStartDialogue = Instantiate(startDialoguePrefab, startDialogueTransform);
+            
+                startingDialogues[i] = newStartDialogue;
+
+                startingDialogues[i].SetActive(false);
+            }
+        }
+
+         
         // Activate the first dialogue to start
         currentIndex = 0;
         ActivateNextText();
+        
    }
 
+    public void InitializeItemCount()
+    {
+        //Set each item count to 1
+        oilCan.count = 1;
+        oilCan1.count = 1;
+        filledOilCan.count = 1;
+        flowers.count = 1;
+        bouquet.count = 1;
+        hairpin.count = 1;
+        woodenStakes.count = 1;
+        shovel.count = 1;
+        tornCloth.count = 1;
+    }
     public bool IsDialogueActive() // Method to check if dialogue is active
     {
         return startDialogue;

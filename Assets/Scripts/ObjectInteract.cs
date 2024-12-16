@@ -72,37 +72,47 @@ public class ObjectInteract : MonoBehaviour
             //Debug.Log(questManager.quests[0].questName);
             if(questManager.quests[0].questName == "Go back to your house." && gameObject.name == "MC's Door")
             {
-                if (Inventory.instance.HasItem("Shovel"))
+                if(GameManager.Instance.currentDay == 1)
                 {
-                    GameManager.Instance.dialogueManager.StartDialogue(GameManager.Instance.endDialogue);
                     questManager.CompleteTask(0);
-
-
+                    StartCoroutine(GameManager.Instance.DayTransition());
                 }
-                else
+                else if(GameManager.Instance.currentDay == 4)
                 {
-                    questManager.CompleteTask(0);
-                    Quest quest3Part5 = new Quest
-                   (
-                       "Investigate traces of the mess from the grave.",
-                       new List<Task>
-                       {
-                            new Task("Find the evidence that created this mess.")
-                       }
-                   );
+                    if (Inventory.instance.HasItem("Shovel"))
+                    {
+                        GameManager.Instance.dialogueManager.StartDialogue(GameManager.Instance.endDialogue);
+                        questManager.CompleteTask(0);
 
-                    questManager.AddQuest(quest3Part5);
+
+                    }
+                    else
+                    {
+                        questManager.CompleteTask(0);
+                        Quest quest3Part5 = new Quest
+                    (
+                        "Investigate traces of the mess from the grave.",
+                        new List<Task>
+                        {
+                                new Task("Find the evidence that created this mess.")
+                        }
+                    );
+
+                        questManager.AddQuest(quest3Part5);
+                    }
                 }
                 
                 
-            }else  if(questManager.quests[0].questName == "Go back to your house" && gameObject.name == "MC's Door")
-            {
-               
-                Debug.Log("GO HOME BUDDY");
-                StartCoroutine(GameManager.Instance.DayTransition());
-                questManager.CompleteTask(0);
                 
             }
+            // else  if(questManager.quests[0].questName == "Go back to your house" && gameObject.name == "MC's Door")
+            // {
+               
+            //     Debug.Log("GO HOME BUDDY");
+            //     StartCoroutine(GameManager.Instance.DayTransition());
+            //     questManager.CompleteTask(0);
+                
+            // }
             //else if(gameObject.name == "Kuyang Hair")
             //{
             //    if(questManager.quests[0].questName == "Investigate the two mysterious objects." && gameObject.name == "MC's Door")

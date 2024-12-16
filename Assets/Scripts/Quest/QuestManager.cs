@@ -67,7 +67,11 @@ public class QuestManager : MonoBehaviour
     public void CompleteTask(int taskIndex)
     {
         Debug.Log("TASK DONE");
-        if (currentQuest == null || taskIndex < 0 || taskIndex >= currentQuest.tasks.Count) return;
+        if (currentQuest == null || taskIndex < 0 || taskIndex >= currentQuest.tasks.Count)
+        {    
+            Debug.LogError("Invalid taskIndex: " + taskIndex);
+            return;
+        }
 
         Task task = currentQuest.tasks[taskIndex];
         task.isCompleted = true;
@@ -110,45 +114,45 @@ void EndQuest()
 
 void Quest()
 {
-        Quest quest1 = new Quest
-        (
-            "Meet the Neighbours",
-            new List<Task>
-            {
-                 new Task("Meet the Chief at his house."),
-                 new Task("Go to Ananda's house and talk to her."),
-                 new Task("Talk to Agus at his house.")
-            }
-        );
+        // Quest quest1 = new Quest
+        // (
+        //     "Meet the Neighbours",
+        //     new List<Task>
+        //     {
+        //          new Task("Meet the Chief at his house."),
+        //          new Task("Go to Ananda's house and talk to her."),
+        //          new Task("Talk to Agus at his house.")
+        //     }
+        // );
 
-        AddQuest(quest1);
+        // AddQuest(quest1);
 
-        Quest quest2Part1 = new Quest
-        (
-            "Meet the Owner of the food stall",
-            new List<Task>
-            {
-                 new Task("Speak to owner of the food stall"),
-            }
-        );
+        // Quest quest2Part1 = new Quest
+        // (
+        //     "Meet the Owner of the food stall",
+        //     new List<Task>
+        //     {
+        //          new Task("Speak to owner of the food stall"),
+        //     }
+        // );
 
-        AddQuest(quest2Part1);
+        // AddQuest(quest2Part1);
 
-        Quest quest2Part2 = new Quest
-        (
-            "Gather items for the ritual",
-            new List<Task>
-            {
-                 new Task("Obtain oil"),
-                 new Task("Obtain matches.")
-            }
-        );
+        // Quest quest2Part2 = new Quest
+        // (
+        //     "Gather items for the ritual",
+        //     new List<Task>
+        //     {
+        //          new Task("Obtain oil"),
+        //          new Task("Obtain matches.")
+        //     }
+        // );
 
-        AddQuest(quest2Part2);
+        // AddQuest(quest2Part2);
 
         Quest quest2Part3 = new Quest
     (
-        "Go back to your house",
+        "Go back to your house.",
         new List<Task>
         {
             new Task("Go home")

@@ -130,7 +130,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Neighbour'sHouse1(AdditionalDetails) 1_0: -1237142242377617204
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
