@@ -137,28 +137,44 @@ public class Inventory : MonoBehaviour
             return;
         }
 
-        // If the first item for combination is already selected, handle second item selection
+         // If one item is already selected for combination
         if (firstSelectedItem != null && secondSelectedItem == null)
         {
-            secondSelectedItem = item;
-
-            // Attempt to combine items
-            if (TryCombineItems(firstSelectedItem, secondSelectedItem))
+            // Check if the user intends to combine items
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) // Example key for combination intent
             {
-                Debug.Log("Items combined successfully.");
+                secondSelectedItem = item;
+
+                // Attempt to combine items
+                if (TryCombineItems(firstSelectedItem, secondSelectedItem))
+                {
+                    Debug.Log("Items combined successfully.");
+                }
+                else
+                {
+                    Debug.Log("Items cannot be combined.");
+                }
+
+                // Reset combination state
+                firstSelectedItem = null;
+                secondSelectedItem = null;
+                DeselectCombinationItems();
             }
             else
             {
-                Debug.Log("Items cannot be combined.");
+                // If no combination intent, reset and select the new item
+                selectedItem = item;
+                description.text = item.itemDescription;
+                Debug.Log("Selected new item: " + item.itemName);
+                StartCoroutine(InstantiateDialogue());
+                dialogueAnimator.SetBool("FadeIn", true);
+                firstSelectedItem = item; // Set the new first item
             }
 
-            // Reset combination state
-            firstSelectedItem = null;
-            secondSelectedItem = null;
-            DeselectCombinationItems();
             return;
         }
 
+        
         // If combination is not intended, reset and select the new item
         firstSelectedItem = null;
         secondSelectedItem = null;

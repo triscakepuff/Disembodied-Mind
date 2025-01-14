@@ -46,6 +46,16 @@ public class AudioManager : MonoBehaviour
         s.source.Play();
     }
 
+    public void Stop(string name)
+    {
+        Audio s = Array.Find(sounds, sound => sound.name == name);
+        if (s == null)
+        {
+            Debug.LogWarning("Audio not found");
+            return;
+        }
+        s.source.Stop();
+    }
     AudioClip ReverseClip(AudioClip clip)
     {
         float[] samples = new float[clip.samples * clip.channels];

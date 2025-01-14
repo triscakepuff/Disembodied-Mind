@@ -189,6 +189,7 @@ public class ObjectInteract : MonoBehaviour
             if(SelectedItem.itemName == "Axe" && gameObject.name == "Hatch" && GameManager.Instance.fenceCut)
             {
                 Inventory.instance.DeselectItem();
+                Inventory.instance.RemoveItem(SelectedItem, 1);
                 spriteRenderer.enabled = false;
                 Transform child = gameObject.transform.GetChild(0);
                 child.gameObject.SetActive(true);
@@ -198,12 +199,14 @@ public class ObjectInteract : MonoBehaviour
             if(SelectedItem.itemName == "Wooden Stakes" && gameObject.name == "Kuyang's Body")
             {
                 Transform child = gameObject.transform.GetChild(1);
+                Inventory.instance.RemoveItem(SelectedItem, 1);
                 child.gameObject.SetActive(true);
                 GameManager.Instance.putStake = true;
             }
             
             if(SelectedItem.itemName == "Jelangkung" && gameObject.name == "Kuyang's Body")
             {
+                Inventory.instance.RemoveItem(SelectedItem, 1);
                 Transform child = gameObject.transform.GetChild(2);
                 child.gameObject.SetActive(true);
                 GameManager.Instance.putJelangkung = true;
@@ -211,13 +214,15 @@ public class ObjectInteract : MonoBehaviour
 
             if(SelectedItem.itemName == "Filled Oil Can" && gameObject.name == "Kuyang's Body")
             {
+                Inventory.instance.RemoveItem(SelectedItem, 1);
                 Transform child = gameObject.transform.GetChild(0);
                 child.gameObject.SetActive(true);
                 GameManager.Instance.putOil = true;
             }
 
-            if(SelectedItem.itemName == "Matches" && gameObject.name == "Kuyang's Body && " && GameManager.Instance.putOil && GameManager.Instance.putJelangkung && GameManager.Instance.putStake)
+            if(SelectedItem.itemName == "Matches" && gameObject.name == "Kuyang's Body" && GameManager.Instance.putOil && GameManager.Instance.putJelangkung && GameManager.Instance.putStake)
             {
+                Inventory.instance.RemoveItem(SelectedItem, 1);
                 StartCoroutine(GameManager.Instance.EndingCutscene());
                 GameManager.Instance.kuyangSetOnFire = true;
             } 

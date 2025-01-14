@@ -97,10 +97,15 @@ public class InterrogationManager : MonoBehaviour
         {
             FindAnyObjectByType<QuestManager>().CompleteTask(1);
             dialogueManager.StartDialogue(GameManager.Instance.dialoguePoorManFinished);
+            inInterrogation = false;
         }
         else if (currentPanel == interrogationPanelChief)
         {
             dialogueManager.StartDialogue(GameManager.Instance.dialogueChiefFinished);
+            if(GameManager.Instance.questManager.quests.Count > 0)
+            if(GameManager.Instance.questManager.quests[0].questName == "Confront the Chief") GameManager.Instance.questManager.CompleteTask(0);
+             
+
         }
     // }
     // public void AfterInterrogation()

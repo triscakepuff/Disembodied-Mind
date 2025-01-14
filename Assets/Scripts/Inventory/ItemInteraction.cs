@@ -14,13 +14,13 @@ public class ItemPickup : MonoBehaviour
 
     void Update()
     {
-        if(GameManager.Instance.dialogueManager.inDialogue)
-        {
-            collider2D.enabled = false;
-        }else
-        {
-            collider2D.enabled = true;
-        }
+        // if(GameManager.Instance.dialogueManager.inDialogue)
+        // {
+        //     collider2D.enabled = false;
+        // }else
+        // {
+        //     collider2D.enabled = true;
+        // }
     }
     private void OnMouseDown()  // This assumes 2D point-and-click, where the player clicks on the item
     {

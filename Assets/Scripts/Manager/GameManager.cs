@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
      public GameObject interrogationPanelPoorMan;
     public bool inTransition = false;
     public float waitTime = 4f;
+    private bool day1InterrogationTarget = false;
     private bool day3InterrogationTarget = false;
     private bool day5InterrogationTarget = false;
 
@@ -58,6 +59,8 @@ public class GameManager : MonoBehaviour
     private bool Day4GivenQuest = false;
     private bool Day4GivenQuest2 = false;
     private bool Day5GivenQuest = false;
+    private bool Day5GivenQuest2 = false;
+    private bool Day5GivenQuest3 = false;
     private bool enteredAbandonedHouse = false;
     public Dialogue poorManInterrogation;
 
@@ -80,7 +83,7 @@ public class GameManager : MonoBehaviour
     private bool dialogueKuyangHairBool = false;
     private bool dialogueTornClothBool = false;
     public Dialogue dialogueShovel;
-    public Dialogue endDialogue;
+    public string[] endDialogue;
 
 
     //Interrogation Dialogues
@@ -286,10 +289,12 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         TimeManager.Instance.ShiftTime("Noon");
-        inventoryManager.AddItem(tornCloth);
-        inventoryManager.AddItem(shovel);
-        inventoryManager.AddItem(Axe);
-        inventoryManager.AddItem(ConfessionNote);
+        // inventoryManager.AddItem(tornCloth);
+        // inventoryManager.AddItem(shovel);
+        // inventoryManager.AddItem(Axe);
+        // inventoryManager.AddItem(woodenStakes);
+        // inventoryManager.AddItem(Matches);
+        // inventoryManager.AddItem(filledOilCan);
         InitializeItemCount();
         UpdateAllDisplays();
         if (questManager == null)
@@ -297,13 +302,14 @@ public class GameManager : MonoBehaviour
             // Automatically find QuestManager if not assigned in the Inspector
             questManager = FindObjectOfType<QuestManager>();
         }
-        currentDay = 5;
+        currentDay = 3;
         DayStartDialogue();
         startDialogue = true;
         navigationManager = FindObjectOfType<NavigationManager>(); // Find the NavigationManager
         FindObjectOfType<AudioManager>().Play("Ambience Day");
         animatorKuyang = kuyangHover.GetComponent<Animator>(); 
         videoPlayer = chiefCutscene.GetComponent<VideoPlayer>();
+        videoPlayer2 = endingCutscene.GetComponent<VideoPlayer>();
     }
 
     // Update is called once per frame
@@ -630,12 +636,11 @@ public class GameManager : MonoBehaviour
         {
             // Initialize jumpscare event
             jumpscareTime = day3JumpscareCooldown;
-            kuyangHoverSpeed = day3FloatSpeed;
 
             // Set animator parameters for descending Kuyang
             animatorKuyang.SetLayerWeight(1, 1f);
             animatorKuyang.SetBool("Descending", true);
-            animatorKuyang.SetFloat("Descending Speed", kuyangHoverSpeed);
+            animatorKuyang.SetFloat("Descending Speed", day3FloatSpeed);
 
             inJumpscareEvent = true;
             startCountdown = true;
@@ -651,17 +656,16 @@ public class GameManager : MonoBehaviour
             );
 
             questManager.AddQuest(quest3Part3);
-        }else
+        }else if(currentDay == 5)
         {
             Debug.Log("DAY 5 JUMPSCARE EVENT");
             // Initialize jumpscare event
             jumpscareTime = day5JumpscareCooldown;
-            kuyangHoverSpeed = day5FloatSpeed;
 
             // Set animator parameters for descending Kuyang
             animatorKuyang.SetLayerWeight(1, 1f);
             animatorKuyang.SetBool("Descending", true);
-            animatorKuyang.SetFloat("Descending Speed", kuyangHoverSpeed);
+            animatorKuyang.SetFloat("Descending Speed", day5FloatSpeed);
 
             inJumpscareEvent = true;
             startCountdown = true;
@@ -831,14 +835,40 @@ public class GameManager : MonoBehaviour
         
         videoPlayer2.Play(); // Start the video
 
-        yield return new WaitForSeconds((float)videoPlayer2.length);
+        yield return new WaitForSeconds(25f);
 
+        for (int i = 0; i < endDialogue.Length; i++)
+        {
+            // Instantiate the prefab first
+            GameObject newStartDialogue = Instantiate(startDialoguePrefab, startDialogueTransform);
+
+            // Set the text of the instantiated object
+            var textComponent = newStartDialogue.GetComponent<TMPro.TextMeshProUGUI>();
+            if (textComponent != null)
+            {
+                textComponent.text = endDialogue[i];
+            }
+
+            // Add to the array
+            startingDialogues[i] = newStartDialogue;
+            startingDialogues[i].SetActive(false);
+
+            yield return new WaitForSeconds(8f);
+        }
+
+        yield return new WaitForSeconds((float)videoPlayer2.length);
+        anim.SetBool("FadeIn", true);
         videoPlayer2.Stop();
         videoCanvas2.SetActive(false);
 
+        
     }
     public void HandleDay1()
     {
+        if(!day1InterrogationTarget)
+        {
+            InterrogationManager.Instance.currentPanel = interrogationPanelPoorMan;
+        }
          if(!day1StartDialogue)
             {
                 DayStartDialogue();
@@ -847,6 +877,9 @@ public class GameManager : MonoBehaviour
 
             //Beginning Dialogue in Day 1
             if(!startDialogue) dialogueTrigger1.SetActive(true);
+
+            if(ladder != null)
+            ladder.GetComponent<BoxCollider2D>().enabled = false;
 
             //Once we enter Ananda's zone
             if (navigationManager.cameras[3].gameObject.activeInHierarchy)
@@ -914,13 +947,18 @@ public class GameManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("CurrentDay", 2);
         PlayerPrefs.Save();
+
+        if(!day3InterrogationTarget)
+        {
+            InterrogationManager.Instance.currentPanel = interrogationPanelPoorMan;
+        }
         if(!day2ChangedTime)
         {
             TimeManager.Instance.ShiftTime("Noon");
             day2ChangedTime = true;
         }
-       
-        if(!day2StartDialogue)
+
+        if(!day2StartDialogue && !inTransition)
         {
             DayStartDialogue();
             day2StartDialogue = true;
@@ -928,10 +966,15 @@ public class GameManager : MonoBehaviour
 
         if(!startDialogue) dialogueTrigger2.SetActive(true);
         
-        //Deactivate Objects
+        //Deactivate and activateObjects
         foodStallNPCs.SetActive(false);
         abandonedHouseDoor.SetActive(false);
-        
+        if(porcupine != null && porcupine2 != null)
+        {
+            porcupine.SetActive(true);
+            porcupine2.SetActive(true);
+        }
+       
         // Beginning Quest in Day 2
         if (!Day2GivenQuest)
         {
@@ -964,6 +1007,7 @@ public class GameManager : MonoBehaviour
         //Check to see if player has 2 quills or not
         if(Quills.count == 2)
         {
+            Debug.Log("IHAVE 2 QUILLS");
             if(questManager.quests[0].questName == "Track porcupines in the forest")
             {
                 questManager.CompleteTask(0);
@@ -1040,6 +1084,7 @@ public class GameManager : MonoBehaviour
             postInterrogation = true;
         }
 
+        if(questManager.quests.Count > 0)
         //After talking to Warung Owner post-theft
         if(questManager.quests[0].questName == "Go back to food stall" && talkedPostInterrogation && !dialogueManager.inDialogue)
         {
@@ -1067,11 +1112,7 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("CurrentDay", 3);
         PlayerPrefs.Save();
 
-        if(!day3InterrogationTarget)
-        {
-            InterrogationManager.Instance.currentPanel = interrogationPanelPoorMan;
-        }
-        if(!day3StartDialogue)
+        if(!day3StartDialogue && !inTransition)
         {
             DayStartDialogue();
             day3StartDialogue = true;
@@ -1082,8 +1123,7 @@ public class GameManager : MonoBehaviour
         //Deactivate objects
         abandonedHouseDoor.SetActive(true);
         quillPoorMan.SetActive(true);
-        porcupine.SetActive(true);
-        porcupine2.SetActive(true);
+       
 
         if(!Day3GivenQuest)
         {
@@ -1194,7 +1234,7 @@ public class GameManager : MonoBehaviour
             TimeManager.Instance.ShiftTime("Noon");
             day4ChangedTime = true;
         }
-        if(!day4StartDialogue)
+        if(!day4StartDialogue && !inTransition)
         {
             DayStartDialogue();
             day4StartDialogue = true;
@@ -1366,7 +1406,7 @@ public class GameManager : MonoBehaviour
             TimeManager.Instance.ShiftTime("Afternoon");
             day5ChangedTime = true;
         }
-        if(!day5StartDialogue)
+        if(!day5StartDialogue && !inTransition)
         {
             DayStartDialogue();
             day5StartDialogue = true;
@@ -1378,6 +1418,7 @@ public class GameManager : MonoBehaviour
 
         //Activate CertainObjects
         if(ladder != null)
+        Debug.Log("GOTCHA");
         ladder.GetComponent<BoxCollider2D>().enabled = true;
 
         //Beginning Dialogue in Day 5
@@ -1480,7 +1521,7 @@ public class GameManager : MonoBehaviour
         }
 
         //Chief confrontation quest
-        if(dialogueManager.currSentence == "I need to talk to him about this." && !dialogueManager.inDialogue)
+        if(dialogueManager.currSentence == "I need to talk to him about this." && !dialogueManager.inDialogue && !Day5GivenQuest2)
         {
             Quest quest5part3 = new Quest
             (
@@ -1495,26 +1536,34 @@ public class GameManager : MonoBehaviour
             questManager.AddQuest(quest5part3);
             dialogueTrigger52.SetActive(true);
             warungDoor.SetActive(false);
+
+            Day5GivenQuest2 = true;
         }
 
         if(dialogueManager.currSentence == "Exorcise the demon for the sake of the village—and for everyone." && !dialogueManager.inDialogue && !cutscene1)
         {
-            
+            // Start the cutscene
             StartCoroutine(PlayCutscene());
+
+            // Set the flag to prevent re-triggering
             cutscene1 = true;
-
-            if(questManager.quests[0].questName == "Confront the Chief")
-            {
-                questManager.CompleteTask(0);
-                Debug.Log("COMPELTEEEEE");
-                Quest quest5part4 = new Quest
-                (
-                    "Exorcise the Kuyang",
-                    new List<Task> { new Task("Find the Kuyang's body and kill it for good") }
-                );
-
-                questManager.AddQuest(quest5part4);
-            }
         }
+
+        if(cutscene1 && !Day5GivenQuest3)
+        {
+            Quest quest5part4 = new Quest
+            (
+                "Exorcise the Kuyang",
+                new List<Task>
+                {
+                    new Task("Find the Kuyang's body and kill it for good")
+                }
+            );
+
+            // Add the new quest
+            questManager.AddQuest(quest5part4);
+            Day5GivenQuest3 = true;
+        }
+      
     }
 }

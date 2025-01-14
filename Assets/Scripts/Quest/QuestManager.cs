@@ -27,6 +27,7 @@ public class QuestManager : MonoBehaviour
 
     public void AddQuest(Quest newQuest)
     {
+         Debug.Log("Added Quest: " + currentQuest.questName);
         quests.Add(newQuest);
         if (!hasActiveQuest)
         {
