@@ -24,9 +24,12 @@ public class GameManager : MonoBehaviour
     public GameObject interrogationPanelChief;
      public GameObject interrogationPanelPoorMan;
     public bool inTransition = false;
+    private bool visitedBackyard = false;
     public float waitTime = 4f;
     private bool day1InterrogationTarget = false;
+    private bool day2InterrogationTarget = false;
     private bool day3InterrogationTarget = false;
+    private bool day4InterrogationTarget = false;
     private bool day5InterrogationTarget = false;
 
     [Header("Safe Game Objects")]
@@ -34,6 +37,7 @@ public class GameManager : MonoBehaviour
     public int[] numbers;
     public GameObject safe;
     public bool unlocked = false;
+    private bool safeUnlocked = false;
     public bool lockSelected = false;
     public Sprite lockOpen;
 
@@ -113,6 +117,7 @@ public class GameManager : MonoBehaviour
     public GameObject dialogueTrigger5;
     public GameObject dialogueTrigger51;
     public GameObject dialogueTrigger52;
+    public GameObject dialogueTrigger6;
     private int currentIndex = 0;
     public GameObject directions;
     public GameObject dialogueObject;
@@ -199,7 +204,7 @@ public class GameManager : MonoBehaviour
     public GameObject porcupine2;
     public GameObject mcDoor;
     public GameObject warungDoor;
-
+    public GameObject bucketinShack;
     public bool placedLadder = false;
     public bool doorUnlocked = false;
     private bool noteSelected = false;
@@ -302,7 +307,7 @@ public class GameManager : MonoBehaviour
             // Automatically find QuestManager if not assigned in the Inspector
             questManager = FindObjectOfType<QuestManager>();
         }
-        currentDay = 3;
+        currentDay = 4;
         DayStartDialogue();
         startDialogue = true;
         navigationManager = FindObjectOfType<NavigationManager>(); // Find the NavigationManager
@@ -353,7 +358,11 @@ public class GameManager : MonoBehaviour
             HandleDay5();
         }
 
-       
+       if(navigationManager.cameras[10].gameObject.activeInHierarchy && !visitedBackyard)
+       {
+            dialogueTrigger6.SetActive(true);
+            visitedBackyard = true;
+       }
 
     }
 
@@ -722,6 +731,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("JUMPSCARE!!!!");
         startDialogue = true;
         DeactivateUI();
+        FindObjectOfType<AudioManager>().Play("Jumpscare");
         kuyangJumpscare.SetActive(true);
         kuyangHover.SetActive(false);
         yield return new WaitForSeconds(3f);
@@ -783,7 +793,7 @@ public class GameManager : MonoBehaviour
     {
         Transform safeChild = safePanel.transform.GetChild(0);
         safeChild.GetComponent<Image>().sprite = lockOpen;
-        FindObjectOfType<AudioManager>().Play("Safe Unlocked");
+        
 
         yield return new WaitForSeconds(0.5f);
 
@@ -1123,8 +1133,15 @@ public class GameManager : MonoBehaviour
         //Deactivate objects
         abandonedHouseDoor.SetActive(true);
         quillPoorMan.SetActive(true);
+        Chief.SetActive(false);
+        bucketinShack.SetActive(true);
        
-
+        if(!day3InterrogationTarget)
+        {
+            Debug.Log("THIS IS THE TARGET");
+            InterrogationManager.Instance.currentPanel = interrogationPanelChief;
+            day3InterrogationTarget = true;
+        }
         if(!Day3GivenQuest)
         {
             Quest quest3Part1 = new Quest
@@ -1188,16 +1205,18 @@ public class GameManager : MonoBehaviour
         }
 
         //Well Logic
-        SpriteRenderer bucketSprite = BucketSpot.GetComponent<SpriteRenderer>();
-        if(objectAction == 1)
+        if(BucketSpot != null)
         {
-            bucketSprite.sprite = wellDown;
-        }else if(objectAction == 2)
-        {
-            bucketSprite.sprite = wellUp;
-            BucketSpot.GetComponent<BoxCollider2D>().enabled = true;
+            SpriteRenderer bucketSprite = BucketSpot.GetComponent<SpriteRenderer>();
+            if(objectAction == 1)
+            {
+                bucketSprite.sprite = wellDown;
+            }else if(objectAction == 2)
+            {
+                bucketSprite.sprite = wellUp;
+                BucketSpot.GetComponent<BoxCollider2D>().enabled = true;
+            }
         }
-
         //Jumpscare event after putting water bucket in front of abandoned house
         if(waterBucket.activeInHierarchy && !waterBucketGiven)
         {
@@ -1240,6 +1259,13 @@ public class GameManager : MonoBehaviour
             day4StartDialogue = true;
         }
 
+
+        if(!day4InterrogationTarget)
+        {
+            Debug.Log("THIS IS THE TARGET");
+            InterrogationManager.Instance.currentPanel = interrogationPanelChief;
+            day4InterrogationTarget = true;
+        }
         //Beginning Dialogue in Day 4
         if(!startDialogue) dialogueTrigger4.SetActive(true);
 
@@ -1417,9 +1443,7 @@ public class GameManager : MonoBehaviour
         Agus.SetActive(false);
 
         //Activate CertainObjects
-        if(ladder != null)
-        Debug.Log("GOTCHA");
-        ladder.GetComponent<BoxCollider2D>().enabled = true;
+        if(ladder != null) ladder.GetComponent<BoxCollider2D>().enabled = true;
 
         //Beginning Dialogue in Day 5
         if(!startDialogue) dialogueTrigger5.SetActive(true);
@@ -1515,9 +1539,12 @@ public class GameManager : MonoBehaviour
         CheckSafeLock();
 
         //Safe Completion
-        if(unlocked)
+        if(unlocked && !safeUnlocked)
         {
+            FindObjectOfType<AudioManager>().Play("Safe Unlocked");
             StartCoroutine(UnlockSafe());
+
+            safeUnlocked = true;
         }
 
         //Chief confrontation quest

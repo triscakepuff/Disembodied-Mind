@@ -3845,7 +3845,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &240196113
 Transform:
   m_ObjectHideFlags: 0
@@ -7251,6 +7251,7 @@ MonoBehaviour:
   dialogueTrigger5: {fileID: 59833307}
   dialogueTrigger51: {fileID: 1481443662}
   dialogueTrigger52: {fileID: 106307408}
+  dialogueTrigger6: {fileID: 1054705958}
   directions: {fileID: 8023108}
   dialogueObject: {fileID: 1236793241}
   day1StartDialogues:
@@ -7375,6 +7376,7 @@ MonoBehaviour:
   porcupine2: {fileID: 625771856}
   mcDoor: {fileID: 1281740469}
   warungDoor: {fileID: 212354601}
+  bucketinShack: {fileID: 240196112}
   placedLadder: 0
   doorUnlocked: 0
   fenceCut: 0
@@ -14130,7 +14132,7 @@ Transform:
   m_GameObject: {fileID: 1003174995}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.054, y: -0.473, z: 0.076112665}
+  m_LocalPosition: {x: 0.382, y: -0.437, z: 0.076112665}
   m_LocalScale: {x: 1, y: 1, z: 0.3604}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14774,6 +14776,59 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1054705958
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1054705960}
+  - component: {fileID: 1054705959}
+  m_Layer: 0
+  m_Name: DialogueTrigger6
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1054705959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054705958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b3fe47b3332c4d49a9b15432fd52d93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  navigationManager: {fileID: 1442724236}
+  dialogueManager: {fileID: 1597344859}
+  dialogueBox: {fileID: 1681975763}
+  dialogue:
+    dialogueLines:
+    - name: Me
+      sentences: "I didn\u2019t know the chief had a backyard."
+    - name: Me
+      sentences: And it's barred with a wire fence.
+--- !u!4 &1054705960
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054705958}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1168673862}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1075484342
 GameObject:
   m_ObjectHideFlags: 0
@@ -16807,6 +16862,7 @@ Transform:
   - {fileID: 59833308}
   - {fileID: 1481443663}
   - {fileID: 106307409}
+  - {fileID: 1054705960}
   - {fileID: 422300542}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

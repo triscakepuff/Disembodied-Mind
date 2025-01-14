@@ -68,6 +68,7 @@ public class NavigationManager : MonoBehaviour
     {
         Transform foodStall = navigationUI[1].transform.Find("Food");
         Transform graveyard = navigationUI[1].transform.Find("Graveyard");
+        Transform backyard = navigationUI[6].transform.Find("Backyard");
         
         if(questManager.quests.Count > 0)
         if(questManager.quests[0].questName == "Meet the Neighbours" ||questManager.quests[0].questName == "Find a way to get inside the Chief's house")
@@ -78,6 +79,14 @@ public class NavigationManager : MonoBehaviour
         {
             foodStall.gameObject.SetActive(true);
             graveyard.gameObject.SetActive(true);
+        }
+
+        if(GameManager.Instance.currentDay == 1 || GameManager.Instance.currentDay == 2)
+        {
+            backyard.gameObject.SetActive(false);
+        }else
+        {
+            backyard.gameObject.SetActive(true);
         }
     }
 }
