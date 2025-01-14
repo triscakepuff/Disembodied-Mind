@@ -21,6 +21,5 @@ public class DialogueAnimator : MonoBehaviour
         name.SetActive(false);
         sentence.SetActive(false);
         button.SetActive(false);
-        DialogueManager.instance.inDialogue = false;
    }
 }

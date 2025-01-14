@@ -14,19 +14,22 @@ public class NavigationManager : MonoBehaviour
     public QuestManager questManager;
 
     void Start()
-    {
+    {   
+        
+
     }
 
     void Update()
     {
         UpdateNavigationUI();
-        Quest1Condition();
+        //Day 1 and 5: disables navigation to food stall and graveyard
+        DayCondition();
     }
 
     void UpdateNavigationUI()
     {
         // Check if startingDialogue is true
-        if (dialogueManager.inDialogue || GameManager.Instance.inTransition || GameManager.Instance.startDialogue)
+        if (dialogueManager.inDialogue || GameManager.Instance.inTransition || GameManager.Instance.startDialogue || InterrogationManager.Instance.interrogationPanelActive)
         {
             // Disable all navigation UI elements if startingDialogue is true
             foreach (var ui in navigationUI)
@@ -61,11 +64,13 @@ public class NavigationManager : MonoBehaviour
         UpdateNavigationUI(); // Re-evaluate the navigation UI state
     }
 
-    public void Quest1Condition()
+    public void DayCondition()
     {
         Transform foodStall = navigationUI[1].transform.Find("Food");
         Transform graveyard = navigationUI[1].transform.Find("Graveyard");
-        if(questManager.quests[0].questName == "Meet the Neighbours")
+        
+        if(questManager.quests.Count > 0)
+        if(questManager.quests[0].questName == "Meet the Neighbours" ||questManager.quests[0].questName == "Find a way to get inside the Chief's house")
         {
             foodStall.gameObject.SetActive(false);
             graveyard.gameObject.SetActive(false);

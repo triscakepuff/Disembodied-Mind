@@ -16,13 +16,18 @@ public class Inventory : MonoBehaviour
 
     private Item selectedItem = null;
     private GameObject selectedButton = null;
+    private Item firstSelectedItem = null;
+    private Item secondSelectedItem = null;
     private Dictionary<Item, GameObject> itemButtonMap = new Dictionary<Item, GameObject>(); // Map item to UI buttons
+
+    private Dictionary<(string, string), Item> combinationResults = new Dictionary<(string, string), Item>();
 
     void Awake()
     {
         if (instance == null)
         {
             instance = this;
+            InitializeCombinationResults();
         }
         else
         {
@@ -30,6 +35,12 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    private void InitializeCombinationResults()
+    {
+        // Initialize your combination results here
+        combinationResults.Add(("Log", "Axe"), GameManager.Instance.Wood); // Reference Wood from GameManager
+        combinationResults.Add(("Axe", "Log"), GameManager.Instance.Wood);
+    }
     // Add an item to the inventory
     public void AddItem(Item newItem)
     {
@@ -107,18 +118,55 @@ public class Inventory : MonoBehaviour
     // Method for selecting an item
     public void SelectItem(Item item)
     {
+         // If the selected item is the same as the currently selected item, deselect it
         if (selectedItem == item)
         {
-            DeselectItem(); // Deselect the item if it's already selected
+            DeselectItem();
+            return;
         }
-        else
+
+        // If no combination is in progress, select the item regularly
+        if (firstSelectedItem == null)
         {
             selectedItem = item;
             description.text = item.itemDescription; // Show the description
-            Debug.Log(item.itemName);
+            Debug.Log("Selected item: " + item.itemName);
             StartCoroutine(InstantiateDialogue());
             dialogueAnimator.SetBool("FadeIn", true);
+            firstSelectedItem = item; // Set as the first item for potential combination
+            return;
         }
+
+        // If the first item for combination is already selected, handle second item selection
+        if (firstSelectedItem != null && secondSelectedItem == null)
+        {
+            secondSelectedItem = item;
+
+            // Attempt to combine items
+            if (TryCombineItems(firstSelectedItem, secondSelectedItem))
+            {
+                Debug.Log("Items combined successfully.");
+            }
+            else
+            {
+                Debug.Log("Items cannot be combined.");
+            }
+
+            // Reset combination state
+            firstSelectedItem = null;
+            secondSelectedItem = null;
+            DeselectCombinationItems();
+            return;
+        }
+
+        // If combination is not intended, reset and select the new item
+        firstSelectedItem = null;
+        secondSelectedItem = null;
+        selectedItem = item;
+        description.text = item.itemDescription;
+        Debug.Log("Reset and selected new item: " + item.itemName);
+        StartCoroutine(InstantiateDialogue());
+        dialogueAnimator.SetBool("FadeIn", true);
     }
 
     // Method for deselecting the current item
@@ -154,6 +202,22 @@ public class Inventory : MonoBehaviour
         return existingItem != null; // Return true if the item exists, false otherwise
     }
 
+    public bool TryCombineItems(Item item1, Item item2)
+    {
+        if (combinationResults.TryGetValue((item1.itemName, item2.itemName), out Item combinedItem))
+        {
+            RemoveItem(item1, 1);
+            RemoveItem(item2, 1);
+            if (combinedItem != null)
+            {
+                AddItem(combinedItem);  // Add the combined item (scriptable object)
+                return true;
+            }
+            return true;
+        }
+        return false;
+    }
+
     // Update inventory UI (placeholder, use if needed)
     public void UpdateInventoryUI()
     {
@@ -163,6 +227,18 @@ public class Inventory : MonoBehaviour
             {
                 UpdateButtonText(button, item);
             }
+        }
+    }
+
+    public void DeselectCombinationItems()
+    {
+        if (firstSelectedItem != null)
+        {
+            firstSelectedItem = null;
+        }
+        if (secondSelectedItem != null)
+        {
+           secondSelectedItem = null;
         }
     }
 }

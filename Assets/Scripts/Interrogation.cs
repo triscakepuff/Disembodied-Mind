@@ -8,54 +8,45 @@ public class Interrogation : MonoBehaviour
     public GameObject interrogationPanel;
     public string Evidence;
     private Item selectedItem;
-    public bool Objection;
 
-    public Dialogue dialogueDefault;
     public Dialogue dialogueTrue;
     public Dialogue dialogueFalse;
+
+    public bool solved = false;
+    private Button button;
     // Start is called before the first frame update
     void Start()
     {
-        Item selectedItem = InventoryManager.GetComponent<Inventory>().GetSelectedItem();
+        button = GetComponent<Button>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(solved);
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             interrogationPanel.SetActive(false);
         }
+
     }
 
    public void InterrogationFunc()
     {
-    //     var inventory = InventoryManager.GetComponent<Inventory>();
-        
-    //     Item selectedItem = inventory.GetSelectedItem();
-    //    // TriggerDialogue(selectedItem.itemName == Evidence ? dialogueTrue : dialogueFalse);
+        Item selectedItem = InventoryManager.GetComponent<Inventory>().GetSelectedItem();
 
-    //     if (inventory.IsItemSelected())
-    //     {
-    //         if(selectedItem.itemName == Evidence)
-    //         {
-    //             interrogationPanel.SetActive(false);
-    //             DialogueManager.Instance.StartDialogue(dialogueTrue);
-    //             gameObject.GetComponent<Button>().enabled = false;
-    //             Objection = true;
-    //         }
-    //         else
-    //         {
-    //             interrogationPanel.SetActive(false);
-    //             DialogueManager.Instance.StartDialogue(dialogueFalse);
-    //         }
-           
-    //     }
-    //     else 
-    //     {
-    //         interrogationPanel.SetActive(false);
-    //         DialogueManager.Instance.StartDialogue(dialogueDefault);
-    //     }
+        if(selectedItem.itemName == Evidence)
+        {
+            InventoryManager.GetComponent<Inventory>().RemoveItem(selectedItem, 1);
+            GameManager.Instance.DeactivateUI();
+            FindAnyObjectByType<DialogueManager>().StartDialogue(dialogueTrue);
+            button.interactable = false;
+            solved = true;
+        }else
+        {
+            GameManager.Instance.DeactivateUI();
+            FindAnyObjectByType<DialogueManager>().StartDialogue(dialogueFalse);
+        }
     }
 
 

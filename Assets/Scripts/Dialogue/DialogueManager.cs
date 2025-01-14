@@ -23,6 +23,7 @@ public class DialogueManager : MonoBehaviour
 
     private void Update()
     {
+        
         if(!GameManager.Instance.startDialogue)
         {
             if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
@@ -31,10 +32,10 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            SkipDialogue();
-        }
+        // if (Input.GetKeyDown(KeyCode.S))
+        // {
+        //     SkipDialogue();
+        // }
         
     }
     public void StartDialogue(Dialogue dialogue)
@@ -73,6 +74,7 @@ public class DialogueManager : MonoBehaviour
 
         foreach (char letter in sentence.ToCharArray())
         {
+            FindObjectOfType<AudioManager>().Play("Dialogue");
             dialogueText.text += letter;
             yield return new WaitForSeconds(0.05f);
         }

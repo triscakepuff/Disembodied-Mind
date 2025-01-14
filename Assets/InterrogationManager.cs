@@ -4,13 +4,34 @@ using UnityEngine;
 
 public class InterrogationManager : MonoBehaviour
 {
-    // public GameObject interrogationPanel;
-    // public DialogueManager dialogueManager;
-    // public DialogueScene dialogueHorror;
-    // public GameObject Button1;
-    // public GameObject Button2;
-    // public GameObject Button3;
-    // // Start is called before the first frame update
+    public static InterrogationManager Instance;
+    public DialogueManager dialogueManager;
+    public GameObject interrogationPanel;
+    public GameObject interrogationPanelPoorMan;
+    public GameObject interrogationPanelChief;
+
+    public GameObject ButtonPoorMan1;
+    private bool poorManInterrogationDone = false;
+
+    public bool interrogationPanelActive = false;
+    public bool interrogationCompleted = false;
+    public bool inInterrogation = false;
+    private bool dialogueTriggered = false;
+
+    public GameObject currentPanel;
+    private void Awake()
+    {
+        // Ensure only one instance of GameManager exists
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    // Start is called before the first frame update
     void Start()
     {
         
@@ -19,27 +40,76 @@ public class InterrogationManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // if(Input.GetKeyDown(KeyCode.Escape))
-        // {
-        //     interrogationPanel.SetActive(false);
-        // }
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            interrogationPanel.SetActive(false);
+        }
 
-        // if(interrogationPanel.activeInHierarchy)
-        // {
-        //    CheckAllObjections();
-        // }
+        if(interrogationPanel.activeInHierarchy)
+        {
+            interrogationPanelActive = true;
+        }else
+        {
+            interrogationPanelActive = false;
+        }
+
+        if(GameManager.Instance.dialogueManager.inDialogue)
+        {
+            currentPanel.SetActive(false);
+        }else if(!GameManager.Instance.dialogueManager.inDialogue && !interrogationCompleted)
+        {
+            currentPanel.SetActive(true);
+        }
+        if(CheckAllObjections() && !dialogueTriggered)
+        {
+            Debug.Log("TRIGGERING DIALOGUE");
+            TriggerDialogueForPanel();
+            dialogueTriggered = true;
+            interrogationPanel.SetActive(false);
+        }
     }
 
-    void CheckAllObjections()
+    public bool CheckAllObjections()
     {
-        // var button1Obj = Button1.GetComponent<Interrogation>().isObjected();
-        // var button2Obj = Button2.GetComponent<Interrogation>().isObjected();
-        // var button3Obj = Button3.GetComponent<Interrogation>().isObjected();
+        if (currentPanel == null) return false;
 
-        // if (button1Obj && button2Obj && button3Obj)
-        // {
-        //     interrogationPanel.SetActive(false);
-        //     dialogueManager.StartDialogue(dialogueHorror);  // Trigger dialogue if all buttons are objected
-        // }
+        // Iterate through the child objects of the current panel
+        foreach (Transform child in currentPanel.transform)
+        {
+            Interrogation interrogationBool = child.GetComponent<Interrogation>();
+            if (interrogationBool != null && !interrogationBool.solved)
+            {
+                Debug.Log("Objection not solved: " + child.gameObject.name);
+                return false; // Exit early if any objection is not solved
+            }
+        }
+
+        Debug.Log("All objections solved for panel: " + currentPanel.name);
+        interrogationCompleted = true;
+        return true; // All objections are solved
+    
+    }
+
+    private void TriggerDialogueForPanel()
+    {
+        Debug.Log("WOWOOWOWOW");
+        if (currentPanel == interrogationPanelPoorMan)
+        {
+            FindAnyObjectByType<QuestManager>().CompleteTask(1);
+            dialogueManager.StartDialogue(GameManager.Instance.dialoguePoorManFinished);
+        }
+        else if (currentPanel == interrogationPanelChief)
+        {
+            dialogueManager.StartDialogue(GameManager.Instance.dialogueChiefFinished);
+        }
+    // }
+    // public void AfterInterrogation()
+    // {
+    //     Debug.Log("Function Called");
+    //     FindAnyObjectByType<QuestManager>().CompleteTask(1);
+    //     interrogationPanel.SetActive(false);
+    //     interrogationCompleted = true;
+    //     inInterrogation = false;
+    // }
     }
 }
