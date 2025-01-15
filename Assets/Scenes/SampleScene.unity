@@ -19206,16 +19206,6 @@ MonoBehaviour:
     - name: Agus
       sentences: I already got my quill, so I should be fine tomorrow.
   dialogueDay3:
-    dialogueLines: []
-  dialogueRepeat:
-    dialogueLines:
-    - name: Agus
-      sentences: "Now now, don\u2019t bother me!!!"
-  dialogueQuestDay1:
-    dialogueLines: []
-  dialogueQuestDay2:
-    dialogueLines: []
-  dialogueQuestDay3:
     dialogueLines:
     - name: Me
       sentences: "\u2026.."
@@ -19233,6 +19223,16 @@ MonoBehaviour:
       sentences: Here, take this axe and chop down the marked tree.
     - name: Agus
       sentences: "Once you\u2019ve got the wood, bring it to me."
+  dialogueRepeat:
+    dialogueLines:
+    - name: Agus
+      sentences: "Now now, don\u2019t bother me!!!"
+  dialogueQuestDay1:
+    dialogueLines: []
+  dialogueQuestDay2:
+    dialogueLines: []
+  dialogueQuestDay3:
+    dialogueLines: []
   dialogueQuestDay31:
     dialogueLines:
     - name: Agus

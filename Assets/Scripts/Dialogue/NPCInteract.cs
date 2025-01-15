@@ -54,7 +54,6 @@ public class NPCInteract : MonoBehaviour
     }
     void Update()
     {
-        Debug.Log(hasTakenQuill);
         if (GameManager.Instance.currentDay != 1 && isDay1)
         {
             ResetTalk();
@@ -180,7 +179,7 @@ public class NPCInteract : MonoBehaviour
                 );
 
                 questManager.AddQuest(quest2Part2); 
-                dialogueRepeat.dialogueLines[0].sentences = "Once you've got the wood, bring it to me.";
+                dialogueRepeat.dialogueLines[0].sentences = "Once you've got the quill, bring it to me.";
                 
             }
             
@@ -197,14 +196,16 @@ public class NPCInteract : MonoBehaviour
             {
                 if(questManager.quests[0].questName == "Bring water to the poor man")
                 {
-                    FindAnyObjectByType<DialogueManager>().StartDialogue(dialogueQuestDay3);
+                    FindAnyObjectByType<DialogueManager>().StartDialogue(dialogueDay3);
                     dialogueRepeat.dialogueLines[0].sentences = "Once you've got the wood, bring it to me.";
                 }
+                hasTalked = true;
             }else
             {
                 FindAnyObjectByType<DialogueManager>().StartDialogue(dialogueDay3);
+                hasTalked = true;
             }
-            hasTalked = true;
+            
         }
         else if (GameManager.Instance.currentDay == 4)
         {
@@ -377,7 +378,7 @@ public class NPCInteract : MonoBehaviour
 
             if(GameManager.Instance.currentDay == 3)
             {
-                dialogueRepeat.dialogueLines[0].sentences = "If you have water, just leave it at the front door.";
+                dialogueRepeat.dialogueLines[0].sentences = "If you have the water, just leave it at the front door.";
                  dialogueRepeat.dialogueLines[0].name = "Poor Man";
             }
         }else if(gameObject.name == "Agus")
