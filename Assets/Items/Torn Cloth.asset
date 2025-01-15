@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Torn Cloth
   m_EditorClassIdentifier: 
   itemName: Torn Cloth
-  itemIcon: {fileID: 8456003360265481788, guid: e626811b6b1334547ae5de813d578c6c, type: 3}
+  itemIcon: {fileID: 4798004541536380707, guid: b51f010b4f94790409bf039acaf7deca, type: 3}
   itemDescription: 
   count: 1

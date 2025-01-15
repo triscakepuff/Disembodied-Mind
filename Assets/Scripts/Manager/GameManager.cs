@@ -307,7 +307,7 @@ public class GameManager : MonoBehaviour
             // Automatically find QuestManager if not assigned in the Inspector
             questManager = FindObjectOfType<QuestManager>();
         }
-        currentDay = 4;
+        currentDay = 1;
         DayStartDialogue();
         startDialogue = true;
         navigationManager = FindObjectOfType<NavigationManager>(); // Find the NavigationManager
@@ -324,6 +324,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(numbers[1]);
         Debug.Log(numbers[2]);
         Debug.Log(unlocked);
+
         if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && !inTransition)
         {
             if(inEvent) return;
@@ -716,6 +717,7 @@ public class GameManager : MonoBehaviour
                 startCountdown = false;  // Stop the countdown
                 
                 ResetKuyangAnimation();
+                day5Survive = true;
             }
         }   
     }
@@ -847,6 +849,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(25f);
 
+        startingDialogues = new GameObject[endDialogue.Length];
         for (int i = 0; i < endDialogue.Length; i++)
         {
             // Instantiate the prefab first
@@ -866,7 +869,8 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(8f);
         }
 
-        yield return new WaitForSeconds((float)videoPlayer2.length);
+        float remainingTime = Mathf.Max(0, (float)videoPlayer2.length - 25f);
+        yield return new WaitForSeconds(remainingTime);
         anim.SetBool("FadeIn", true);
         videoPlayer2.Stop();
         videoCanvas2.SetActive(false);
