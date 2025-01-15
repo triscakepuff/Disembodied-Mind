@@ -10478,13 +10478,14 @@ MonoBehaviour:
     dialogueLines: []
   dialogueEvent:
     dialogueLines: []
+  hasTalked: 0
   Evidence: 
   startInterrogation: 0
   startInterrogation2: 0
   CanBeInterrogated: 0
-  interrogationPanels: {fileID: 0}
-  interrogationPanelPoorMan: {fileID: 0}
-  interrogationPanelChief: {fileID: 0}
+  interrogationPanels: {fileID: 1190235065}
+  interrogationPanelPoorMan: {fileID: 1578796361}
+  interrogationPanelChief: {fileID: 1753543619}
 --- !u!212 &711972945
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -12812,7 +12813,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &968840339
 Transform:
   m_ObjectHideFlags: 0
@@ -12889,6 +12890,7 @@ MonoBehaviour:
     dialogueLines: []
   dialogueEvent:
     dialogueLines: []
+  hasTalked: 0
   Evidence: 
   startInterrogation: 0
   startInterrogation2: 0
@@ -13314,6 +13316,7 @@ MonoBehaviour:
     dialogueLines: []
   dialogueEvent:
     dialogueLines: []
+  hasTalked: 0
   Evidence: 
   startInterrogation: 0
   startInterrogation2: 0
@@ -16868,6 +16871,7 @@ MonoBehaviour:
       sentences: GET LOST!!!
   dialogueEvent:
     dialogueLines: []
+  hasTalked: 0
   Evidence: 
   startInterrogation: 0
   startInterrogation2: 0
@@ -19305,13 +19309,14 @@ MonoBehaviour:
     dialogueLines: []
   dialogueEvent:
     dialogueLines: []
+  hasTalked: 0
   Evidence: 
   startInterrogation: 0
   startInterrogation2: 0
   CanBeInterrogated: 0
-  interrogationPanels: {fileID: 0}
-  interrogationPanelPoorMan: {fileID: 0}
-  interrogationPanelChief: {fileID: 0}
+  interrogationPanels: {fileID: 1190235065}
+  interrogationPanelPoorMan: {fileID: 1578796361}
+  interrogationPanelChief: {fileID: 1753543619}
 --- !u!212 &1427987490
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -21430,7 +21435,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1492758660
 Transform:
   m_ObjectHideFlags: 0
@@ -25601,13 +25606,14 @@ MonoBehaviour:
       sentences: .....
     - name: Warung Owner
       sentences: I think he might be hiding in the abandoned house near here.
+  hasTalked: 0
   Evidence: Lol2
   startInterrogation: 0
   startInterrogation2: 0
   CanBeInterrogated: 0
   interrogationPanels: {fileID: 1190235065}
   interrogationPanelPoorMan: {fileID: 1578796361}
-  interrogationPanelChief: {fileID: 146692818}
+  interrogationPanelChief: {fileID: 1753543619}
 --- !u!61 &1794813589
 BoxCollider2D:
   m_ObjectHideFlags: 0

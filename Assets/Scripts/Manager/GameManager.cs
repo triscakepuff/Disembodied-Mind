@@ -1138,7 +1138,7 @@ public class GameManager : MonoBehaviour
         abandonedHouseDoor.SetActive(true);
         quillPoorMan.SetActive(true);
         Chief.SetActive(false);
-        bucketinShack.SetActive(true);
+        if(bucketinShack != null) bucketinShack.SetActive(true);
        
         if(!day3InterrogationTarget)
         {

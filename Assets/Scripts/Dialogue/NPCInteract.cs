@@ -7,7 +7,8 @@ public class NPCInteract : MonoBehaviour
     private bool hasTakenOil = false;
     private bool hasTakenQuill = false;
     private bool eventDialogue = false;
-    private bool isDay1 = true;
+    private bool talkedPostInterrogation = false;
+    private int lastKnownDay = 1;
     [Header("Managers")]
     public QuestManager questManager;
     public DialogueManager dialogueManager;
@@ -28,7 +29,7 @@ public class NPCInteract : MonoBehaviour
     public Dialogue dialogueDay4;
     public Dialogue dialogueDay5;
     public Dialogue dialogueEvent;
-    private bool hasTalked = false;
+    public bool hasTalked = false;
     public string Evidence;
 
     [Header("Interrogation")]
@@ -54,11 +55,16 @@ public class NPCInteract : MonoBehaviour
     }
     void Update()
     {
-        if (GameManager.Instance.currentDay != 1 && isDay1)
+       if (GameManager.Instance.currentDay != lastKnownDay)
         {
             ResetTalk();
+            lastKnownDay = GameManager.Instance.currentDay; // Update the last known day
         }
 
+        if(GameManager.Instance.currentDay != 2 && startInterrogation)
+        {
+            startInterrogation = false;
+        }
         if (hasTalked)
         {
             if (gameObject.name == "Agus")
@@ -124,8 +130,8 @@ public class NPCInteract : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Debug.Log(hasTalked);
-        Debug.Log(gameObject.name);
+        if(gameObject.name == "Agus") Debug.Log(hasTalked);
+        
         Item selectedItem = Inventory.instance.GetSelectedItem();
 
         
@@ -141,9 +147,10 @@ public class NPCInteract : MonoBehaviour
         {
             questManager.CompleteTask(0);
             StartInterrogation();
-        }else if(InterrogationManager.Instance.interrogationCompleted)
+        }else if(InterrogationManager.Instance.interrogationCompleted && !talkedPostInterrogation)
         {
             HandlePostInterrogationDialogue();
+            talkedPostInterrogation = true;
         }
         else
         {
@@ -282,7 +289,6 @@ public class NPCInteract : MonoBehaviour
     public void ResetTalk()
     {
         hasTalked = false;
-        isDay1 = false;
     }
 
     public void StartInterrogation()
